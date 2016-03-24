@@ -10,15 +10,21 @@ const clientTsProject = ts.createProject('src/client/tsconfig.json', {
 
 const clientRoot = 'src/client';
 const distClientRoot = 'dist/client';
-const clientTsTree = [`${clientRoot}/app/**/*.ts`];
-const clientVendorDeps = [
-  'node_modules/angular2/**/*.js',
-  'node_modules/systemjs/**/*.js',
-  'node_modules/rxjs/**/*.js',
-  'node_modules/zone.js/dist/*.js',
-  'node_modules/reflect-metadata/Reflect.js'
-];
-const clientHtmlTree = [`${clientRoot}/**/*.html`];
+const paths = {
+  client: {
+    ts: `${clientRoot}/app/**/*.ts`,
+    html: `${clientRoot}/**/*.html`,
+    images: `${clientRoot}/**/*.+(png|jpg|gif|ico)`,
+    firebaseConfig: `${clientRoot}/firebase.json`,
+    vendorDeps: [
+      'node_modules/angular2/**/*.js',
+      'node_modules/systemjs/**/*.js',
+      'node_modules/rxjs/**/*.js',
+      'node_modules/zone.js/dist/*.js',
+      'node_modules/reflect-metadata/Reflect.js'
+    ]
+  }
+};
 
 gulp.task('clean', (done) => {
   return fse.remove('dist', done);
@@ -26,19 +32,22 @@ gulp.task('clean', (done) => {
 
 gulp.task('build:client', ['clean'], () => {
   return merge2([
-    gulp.src(clientTsTree.concat('typings/browser/ambient/**/*.ts'))
+    gulp.src([
+      paths.client.ts,
+      'typings/browser/ambient/**/*.ts'
+    ])
       .pipe(ts(clientTsProject))
       .pipe(gulp.dest(`${distClientRoot}/app`)),
-    gulp.src(clientHtmlTree)
+    gulp.src([
+      paths.client.html,
+      paths.client.firebaseConfig,
+      paths.client.images
+    ])
       .pipe(gulp.dest(distClientRoot)),
-    gulp.src(`${clientRoot}/firebase.json`)
-      .pipe(gulp.dest(distClientRoot)),
-    gulp.src(clientVendorDeps, {base: 'node_modules'})
+    gulp.src(paths.client.vendorDeps, {base: 'node_modules'})
       .pipe(gulp.dest(`${distClientRoot}/vendor`))
   ]);
 });
-
-
 
 gulp.task('enforce-format', function() {
   return doCheckFormat().on('warning', function(e) {
@@ -61,7 +70,7 @@ gulp.task('lint', function() {
       "variable-name": false
     }
   };
-  return gulp.src(clientTsTree)
+  return gulp.src(paths.client.ts)
       .pipe(tslint({
         tslint: require('tslint').default,
         configuration: tslintConfig,
