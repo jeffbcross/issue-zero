@@ -1,5 +1,21 @@
-list.html
-<br>
-Issue1
-<br>
-Issue2
+<div class="container">
+<md-card *ngFor="#issue of issues | async">
+  <md-card-header>
+    <img md-card-avatar [src]="issue.avatar" alt="logo for {{issue.organization}}">
+    <md-card-title>
+      {{issue.title}}
+    </md-card-title>
+    <md-card-subtitle>
+      {{issue.organization}}
+      /
+      {{issue.repository}}
+    </md-card-subtitle>
+  </md-card-header>
+  <md-card-content>
+    {{issue.description}}
+  </md-card-content>
+  <md-card-actions>
+    <a md-button color="warn" [routerLink]="['../IssueClose', {id: issue.id}]">CLOSE</a>
+  </md-card-actions>
+</md-card>
+</div>

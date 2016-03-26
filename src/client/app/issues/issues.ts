@@ -9,7 +9,7 @@ import {CloseComponent} from './close/close';
     {templateUrl : 'app/issues/issues.html', directives : ROUTER_DIRECTIVES})
 @RouteConfig([
   new AsyncRoute({
-    path : '/close',
+    path : '/:id/close',
     name : 'IssueClose',
     loader :
         () =>
