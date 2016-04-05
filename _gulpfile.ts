@@ -12,15 +12,15 @@ const clientRoot = 'src/client';
 const distClientRoot = 'dist/client';
 const clientTsTree = [`${clientRoot}/app/**/*.ts`, 'typings/browser/browser.d.ts'];
 const clientVendorDeps = [
-  'node_modules/angular2/**/*.js',
-  'node_modules/angularfire2/**/*.js',
-  'node_modules/firebase/**/*.js',
-  'node_modules/systemjs/**/*.+(js|map)',
-  'node_modules/rxjs/**/*.+(js|map)',
+  'node_modules/angular2/bundles/**/*',
+  'node_modules/angularfire2/**/*.+(js|map)',
+  'node_modules/firebase/lib/**/*.js',
+  'node_modules/systemjs/dist/**/*.+(js|map)',
+  'node_modules/rxjs/bundles/**/*.+(js|map)',
   'node_modules/zone.js/dist/*.js',
   'node_modules/reflect-metadata/Reflect.+(js|map)',
   'node_modules/@angular2-material/**/*.+(js|css|html|map)',
-  'node_modules/material-design-icons/**/*.+(css|svg|woff|ttf|eot|woff2)'
+  'node_modules/material-design-icons/iconfont/**/*.+(css|svg|woff|ttf|eot|woff2)'
 ];
 const clientHtmlTree = [`${clientRoot}/**/*.html`];
 const clientCssTree = [`${clientRoot}/**/*.css`];
