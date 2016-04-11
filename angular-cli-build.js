@@ -6,7 +6,8 @@ module.exports = function(defaults) {
   var app = new Angular2App(defaults, {
     vendorNpmFiles: [
       'angularfire2/**/*.js',
-      'firebase/lib/*.js'
+      'firebase/lib/*.js',
+      'rxjs/**/*.js'
     ]
   });
   return app.toTree();

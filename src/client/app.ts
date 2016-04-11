@@ -5,6 +5,13 @@ import {bootstrap} from 'angular2/platform/browser';
 import {ROUTER_PROVIDERS, APP_BASE_HREF} from 'angular2/router';
 import {FIREBASE_PROVIDERS, defaultFirebase, AuthMethods, AuthProviders, firebaseAuthConfig} from 'angularfire2';
 
+// Import auto-patching RxJS operators
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/concat';
+import 'rxjs/add/operator/switchMap';
+
 import {IssueCliApp} from './app/issue-cli';
 import {FB_URL, IS_PRERENDER} from './app/config';
 
