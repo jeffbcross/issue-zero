@@ -7,7 +7,9 @@ module.exports = function(defaults) {
     vendorNpmFiles: [
       'angularfire2/**/*.js',
       'firebase/lib/*.js',
-      'rxjs/**/*.js'
+      'rxjs/**/*.js',
+      '@angular2-material/**/*.+(js|css|svg)',
+      'material-design-icons/**/*.+(css|svg|woff|ttf|eot|woff2)'
     ]
   });
   return app.toTree();

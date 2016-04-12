@@ -1,13 +1,10 @@
-import {Component} from 'angular2/core';
-import {RouteConfig, RouterOutlet} from 'angular2/router';
+import {Component} from 'angular2/core'
 
 @Component({
-  template: '<router-outlet></router-outlet>',
+  template: '',
   providers: [],
-  directives: [RouterOutlet]
+  directives: []
 })
-@RouteConfig([
-])
 export class Login {
   constructor() {}
 }

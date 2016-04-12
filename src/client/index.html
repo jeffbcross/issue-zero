@@ -18,6 +18,55 @@
     }
   </script>
   -->
+  <style>
+    html,body {
+      margin: 0;
+      height: 100%;
+      font-family: Roboto, 'Helvetica Neue', sans-serif;
+
+      /* Support for all WebKit browsers. */
+      -webkit-font-smoothing: antialiased;
+
+      /* Support for Safari and Chrome. */
+      text-rendering: optimizeLegibility;
+
+      /* Support for Firefox. */
+      -moz-osx-font-smoothing: grayscale;
+
+      /* Support for IE. */
+      font-feature-settings: 'liga';
+    }
+    button[md-button] {
+      text-transform: uppercase;
+    }
+
+    @font-face {
+      font-family: 'Material Icons';
+      font-style: normal;
+      font-weight: 400;
+      src: url(/vendor/material-design-icons/iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
+      src: local('Material Icons'),
+          local('MaterialIcons-Regular'),
+          url(/vendor/material-design-icons/iconfont/MaterialIcons-Regular.woff2) format('woff2'),
+          url(/vendor/material-design-icons/iconfont/MaterialIcons-Regular.woff) format('woff'),
+          url(/vendor/material-design-icons/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+    }
+    .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;  /* Preferred icon size */
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+    }
+  </style>
 </head>
 <body>
   <issue-cli-app>Loading...</issue-cli-app>
@@ -37,7 +86,8 @@
       map: {
         angularfire2: 'vendor/angularfire2',
         firebase: 'vendor/firebase/lib',
-        rxjs: 'vendor/rxjs'
+        rxjs: 'vendor/rxjs',
+        '@angular2-material': 'vendor/@angular2-material'
       },
       packages: {
         app: {
@@ -46,15 +96,48 @@
         },
         angularfire2: {
           defaultExtension: 'js',
+          format: 'cjs',
           main: 'angularfire2.js'
         },
         firebase: {
           defaultExtension: 'js',
+          format: 'cjs',
           main: 'firebase-web.js'
         },
         rxjs: {
           defaultExtension: 'js',
+          format: 'cjs',
           main: 'Rx.js'
+        },
+        '@angular2-material/core': {
+          format: 'cjs',
+          defaultExtension: 'js',
+          main: 'core.js'
+        },
+        '@angular2-material/toolbar': {
+          format: 'cjs',
+          defaultExtension: 'js',
+          main: 'toolbar.js'
+        },
+        '@angular2-material/sidenav': {
+          format: 'cjs',
+          defaultExtension: 'js',
+          main: 'sidenav.js'
+        },
+        '@angular2-material/button': {
+          format: 'cjs',
+          defaultExtension: 'js',
+          main: 'button.js'
+        },
+        '@angular2-material/card': {
+          format: 'cjs',
+          defaultExtension: 'js',
+          main: 'card.js'
+        },
+        '@angular2-material/progress-circle': {
+          format: 'cjs',
+          defaultExtension: 'js',
+          main: 'progress-circle.js'
         }
       }
     });
