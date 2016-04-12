@@ -13,7 +13,7 @@ import {IS_PRERENDER} from './config';
 
 @Component({
   selector: 'issue-cli-app',
-    styles : [ `
+  styles: [`
 md-toolbar button {
   color: white;
   background: transparent;
@@ -50,8 +50,8 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
 .indicator-container md-progress-circle {
   margin: -50px auto 0;
 }
-` ],
-  template : `
+`],
+  template: `
 <md-sidenav-layout [ngClass]="{'preRendered': isPrerender}">
   <md-sidenav #sidenav>
     <div *ngIf="!isPrerender">
@@ -98,9 +98,9 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
   <router-outlet *ngIf="!isPrerender"></router-outlet>
 </md-sidenav-layout>
 `,
-  directives : [
-    ROUTER_DIRECTIVES, MdToolbar, MD_CARD_DIRECTIVES, MD_SIDENAV_DIRECTIVES,
-    MdButton, MdProgressCircle
+  directives: [
+    ROUTER_DIRECTIVES, MdToolbar, MD_CARD_DIRECTIVES, MD_SIDENAV_DIRECTIVES, MdButton,
+    MdProgressCircle
   ],
   pipes: []
 })
@@ -109,8 +109,8 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
   {path: '/login', name: 'Login', component: Login},
 ])
 export class IssueCliApp {
-  constructor(public af: AngularFire, router: Router,
-              @Inject(IS_PRERENDER) public isPrerender: boolean) {
+  constructor(
+      public af: AngularFire, router: Router, @Inject(IS_PRERENDER) public isPrerender: boolean) {
     /**
      * Check login state and redirect to appropriate
      * page: Login or Issues route.
@@ -119,7 +119,7 @@ export class IssueCliApp {
       af.auth
           .do((state: FirebaseAuthState) => {
             // If state is null (user not logged in) navigate to log in
-            router.navigate([ state ? './Issues' : './Login' ]);
+            router.navigate([state ? './Issues' : './Login']);
           })
           // Only emit if user is logged in (state is non-null)
           .filter(state => state !== null)
@@ -131,7 +131,7 @@ export class IssueCliApp {
                       // Keep this Observable alive for the duration of the app.
                       .do((state: FirebaseAuthState) => {
                         if (!state) {
-                          router.navigate([ './Login' ])
+                          router.navigate(['./Login'])
                         }
                       }))
           .subscribe();
