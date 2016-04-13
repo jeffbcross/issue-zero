@@ -1,6 +1,9 @@
 import {Component} from 'angular2/core';
 import {AngularFire} from 'angularfire2';
 import {MdButton} from '@angular2-material/button';
+import {CanActivate} from 'angular2/router';
+
+import {FB_URL} from '../config';
 
 @Component({
   styles: [`
@@ -26,6 +29,8 @@ h3.headline {
   `,
   directives: [MdButton]
 })
+// If not a login redirect, and no existing auth state
+@CanActivate(() => !(<any>window).__IS_POST_LOGIN && !(new Firebase(FB_URL).getAuth()))
 export class Login {
   constructor(public af: AngularFire) {}
 }

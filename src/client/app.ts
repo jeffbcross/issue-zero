@@ -13,11 +13,18 @@ import 'rxjs/add/operator/concat';
 import 'rxjs/add/operator/switchMap';
 
 import {IssueCliApp} from './app/issue-cli';
-import {FB_URL, IS_PRERENDER} from './app/config';
+import {FB_URL, IS_PRERENDER, IS_POST_LOGIN} from './app/config';
+
+// Checks if this is the OAuth redirect callback from Firebase
+// Has to be global so can be used in CanActivate
+(<any>window).__IS_POST_LOGIN = /\&__firebase_request_key/.test(window.location.hash);
 
 bootstrap(IssueCliApp, [
   FIREBASE_PROVIDERS, ROUTER_PROVIDERS, defaultFirebase(FB_URL),
   provide(IS_PRERENDER, {useValue: false}),
+  provide(IS_POST_LOGIN, {
+    useValue: (<any>window).__IS_POST_LOGIN
+  }),
   firebaseAuthConfig(
       {provider: AuthProviders.Github, method: AuthMethods.Redirect, scope: ['repo']}),
   HTTP_PROVIDERS

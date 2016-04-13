@@ -6,9 +6,10 @@ import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav';
 import {MdButton} from '@angular2-material/button';
 import {MdProgressCircle} from '@angular2-material/progress-circle';
+import {Observable} from 'rxjs';
 import {Issues} from './issues/issues';
 import {Login} from './login/login';
-import {IS_PRERENDER} from './config';
+import {IS_PRERENDER, IS_POST_LOGIN} from './config';
 
 
 @Component({
@@ -110,19 +111,31 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
 ])
 export class IssueCliApp {
   constructor(
-      public af: AngularFire, router: Router, @Inject(IS_PRERENDER) public isPrerender: boolean) {
+      public af: AngularFire, router: Router, @Inject(IS_PRERENDER) public isPrerender: boolean, @Inject(IS_POST_LOGIN) isPostLogin:boolean) {
     /**
      * Check login state and redirect to appropriate
      * page: Login or Issues route.
      */
     if (!isPrerender) {
-      af.auth
-          .do((state: FirebaseAuthState) => {
+      // If the page was part of the Firebase OAuth flow (the successful login redirect),
+      // then short-circuit the auth observable.
+      Observable.of(isPostLogin)
+          .filter(v => v === true)
+          .concat(af.auth)
+          // Cast nulls to booleans
+          .map(v => !!v)
+          .distinctUntilChanged()
+          .do((loggedIn: boolean) => {
+            console.log('navigating to ', loggedIn)
             // If state is null (user not logged in) navigate to log in
-            router.navigate([state ? './Issues' : './Login']);
+            if (loggedIn) {
+              router.navigate(['./Issues']);
+            } else if (!isPostLogin) {
+              router.navigate(['./Login']);
+            }
           })
           // Only emit if user is logged in (state is non-null)
-          .filter(state => state !== null)
+          .filter(state => !!state)
           // Complete this Observable after successful login
           .take(1)
           // onLogoutObervable takes over once user is logged in.
