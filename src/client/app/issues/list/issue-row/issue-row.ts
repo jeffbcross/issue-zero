@@ -7,8 +7,14 @@ declare var Hammer;
 @Component({
   selector: 'issue-row',
   template: `
-    <div class="hidden hidden-triage"></div>
-    <div class="hidden hidden-close"></div>
+    <div class="hidden-elements">
+      <div class="hidden hidden-triage">
+        <span>TRIAGE</span>
+      </div>
+      <div class="hidden hidden-close">
+        <span>CLOSE</span>
+      </div>
+    </div>
     <md-list-item (touchmove)="onTouchMove($event)" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
       <img md-list-avatar [src]="issue.user.avatar_url + '&s=40'" alt="{{issue.user.login}} logo">
       <span md-line> {{issue.title}} </span>
@@ -25,8 +31,20 @@ declare var Hammer;
     }
 
     .hidden {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
       height: 72px;
       width: 0;
+    }
+
+    .hidden span {
+      height: 16px;
+      display: inline-block;
+      vertical-align: middle;
     }
 
     .hidden-triage {
@@ -93,11 +111,12 @@ export class IssueRow implements AfterViewInit {
     this.closeNativeEl = this.el.nativeElement.querySelector('.hidden-close');
     var hammerEl = new Hammer(this.listItemNativeEl);
     hammerEl.on('swiperight', () => {
-      this.gh.closeIssue(this.issue).subscribe(() => {});
+      console.log('triage');
     });
 
     hammerEl.on('swipeleft', () => {
-      console.log('swipeleft');
+      // TODO(jeffbcross): update the list of issues after removing one
+      this.gh.closeIssue(this.issue).subscribe(() => {});
     });
   }
 }
