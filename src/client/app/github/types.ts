@@ -14,3 +14,7 @@ export enum GithubObjects {
   Repo,
   Issue
 }
+
+export type Issue = {
+  url: string;
+}
