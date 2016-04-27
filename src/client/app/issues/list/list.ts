@@ -57,7 +57,7 @@ export class List implements OnInit {
     this.issues = this.filterStore.getFilter(`${org}/${repo}`).changes
       .map((filter:FilterObject) => generateQuery(filter))
       .switchMap((query:string) => {
-        return this.gh.searchIssues(query)
+        return this.gh.getIssues(query)
       });
   }
 

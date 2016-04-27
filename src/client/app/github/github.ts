@@ -40,7 +40,7 @@ export class Github {
       .switchMap((url:string) => this._http.get(url).map((res) => res.json()));
   }
 
-  searchIssues(query:string):Observable<Object[]> {
+  getIssues(query:string):Observable<Object[]> {
     return this._af.auth
       .filter(auth => auth !== null && auth.github)
       .map((auth:FirebaseAuthState) => `${GITHUB_API}/search/issues?q=${query}&access_token=${auth.github.accessToken}`)
@@ -48,7 +48,7 @@ export class Github {
         .map(res => res.json().items));
   }
 
-  closeIssue(issue:Issue): Observable<any> {
+  closeIssue(issue:GHIssue): Observable<any> {
     var [url, org, repo, number] = /\/([a-z0-9\-]*)\/([a-z0-9\-]*)\/issues\/([0-9]*)$/.exec(issue.url);
     console.log('url, org, repo', url, org, repo);
     return this._af.auth
