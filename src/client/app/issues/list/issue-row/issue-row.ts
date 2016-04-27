@@ -39,6 +39,11 @@ declare var Hammer;
       color: white;
       height: 72px;
       width: 0;
+
+    }
+
+    .hidden.leave {
+      transition: width 0.3s;
     }
 
     .hidden span {
@@ -56,6 +61,10 @@ declare var Hammer;
       background: #c00;
       float: right;
     }
+
+    md-list-item.leave {
+      transition: left 0.3s;
+    }
   `],
   providers: [Github],
   directives: [MD_LIST_DIRECTIVES],
@@ -71,6 +80,9 @@ export class IssueRow implements AfterViewInit {
   constructor(public el:ElementRef, public gh:Github) {}
 
   onTouchStart (evt) {
+    this.closeNativeEl.classList.remove('leave');
+    this.triageNativeEl.classList.remove('leave');
+    this.listItemNativeEl.classList.remove('leave');
     this.listItemNativeEl.style.position = 'relative';
     this.listItemNativeEl.style.display = 'block';
     this.listItemNativeEl.style.left = '0';
@@ -82,8 +94,9 @@ export class IssueRow implements AfterViewInit {
   }
 
   onTouchMove (evt) {
-    var {clientX, clientY} = evt.targetTouches[0];
-    var left = clientX - this.touchStartCoords.x;
+    console.log('onTouchMove', evt);
+    var {pageX} = evt.targetTouches[0];
+    var left = pageX - this.touchStartCoords.x;
 
 
     if (left > 0) {
@@ -91,6 +104,7 @@ export class IssueRow implements AfterViewInit {
       this.triageNativeEl.style.width = `${left}px`;
       this.listItemNativeEl.style.left = '0';
     } else {
+      // TODO(jeffbcross): fix the truncating as it's dragged off screen
       this.triageNativeEl.style.width = '0';
       this.listItemNativeEl.style.left = `${left}px`;
       this.closeNativeEl.style.width = `${Math.abs(left)}px`
@@ -98,8 +112,11 @@ export class IssueRow implements AfterViewInit {
   }
 
   onTouchEnd (evt) {
-    this.listItemNativeEl.style.position = '';
-    this.listItemNativeEl.style.display = 'block';
+    this.closeNativeEl.classList.add('leave');
+    this.triageNativeEl.classList.add('leave');
+    this.listItemNativeEl.classList.add('leave');
+    // this.listItemNativeEl.style.position = '';
+    // this.listItemNativeEl.style.display = 'block';
     this.listItemNativeEl.style.left = '0';
     this.closeNativeEl.style.width = '0';
     this.triageNativeEl.style.width = '0';
