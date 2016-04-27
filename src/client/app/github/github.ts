@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {ScalarObservable} from 'rxjs/observable/ScalarObservable';
 import {ErrorObservable} from 'rxjs/observable/ErrorObservable';
 
-import {User, Issue, Repo} from './types';
+import {User, Issue as GHIssue, Repo} from './types';
 import {LOCAL_STORAGE} from '../config';
 
 const GITHUB_API = 'https://api.github.com';
@@ -105,5 +105,38 @@ export class Github {
   _setCache(path:string, value:string): void {
     var cacheKey = `izCache${path}`;
     this._localStorage.setItem(cacheKey, value);
+  }
+}
+
+export class Issue {
+  org: string;
+  repo: string;
+  number: number;
+  userName: string;
+  avatar: string;
+  body: string;
+  title: string;
+  constructor({title, user: {avatar_url, login}, body, url, number}: GHIssue, private _af:AngularFire, private _http:Http) {
+    this.title = title;
+    this.body = body;
+    this.userName = login;
+    this.avatar = avatar_url;
+    this.number = number;
+    var [url, org, repo, num] = /\/([a-z0-9\-]*)\/([a-z0-9\-]*)\/issues\/([0-9]*)$/.exec(url);
+    this.org = org;
+    this.repo = repo;
+  }
+
+  close() {
+    return this._af.auth
+      .filter(auth => auth !== null && auth.github)
+      .map((auth:FirebaseAuthState) => `${GITHUB_API}/repos/${this.org}/${this.repo}/issues/${this.number}?access_token=${auth.github.accessToken}`)
+      .do(v => console.log('url', v))
+      .switchMap((url:string) => this._http.patch(url, JSON.stringify({
+        state: 'closed'
+      }))
+        .do(x => {console.log('response', x)})
+        .map(res => res.json()));
+
   }
 }

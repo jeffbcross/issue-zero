@@ -17,4 +17,8 @@ export enum GithubObjects {
 
 export type Issue = {
   url: string;
+  user: User;
+  body: string;
+  title: string;
+  number: number;
 }
