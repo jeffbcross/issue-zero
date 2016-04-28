@@ -26,9 +26,10 @@ module.exports = function(defaults) {
       'firebase/lib/firebase-web.js',
       'rxjs/bundles/Rx.js',
       '@angular2-material/**/*.+(js|css|svg|map)',
-      'material-design-icons/**/*.+(woff2|woff)',
+      'material-design-icons/iconfont/MaterialIcons-Regular.+(woff|woff2)',
       'angular2-service-worker/dist/worker.js',
-      'hammerjs/hammer.min.js'
+      'hammerjs/hammer.min.js',
+      '@ngrx/**/*.js'
     ]
   });
   const ngTree = app.toTree();
@@ -61,5 +62,10 @@ module.exports = function(defaults) {
     allowNone: false,
     outputFile: '/app-concat.js'
   });
-  return mergeTrees([ngTree, appShellIndex, jsBundleTree, swTree], { overwrite: true })
+  return mergeTrees([
+    ngTree,
+    appShellIndex,
+    jsBundleTree,
+    swTree
+  ], { overwrite: true })
 };

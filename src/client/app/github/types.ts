@@ -22,3 +22,7 @@ export type Issue = {
   title: string;
   number: number;
 }
+
+export interface AppState {
+  issues: Issue[];
+}

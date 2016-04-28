@@ -15,6 +15,8 @@ import {Github} from './github/github';
 import {Repo} from './github/types';
 import {RepoSelectorComponent} from './+repo-selector/index';
 
+import {Database} from '@ngrx/db';
+
 @Component({
   selector: 'issue-cli-app',
   styles: [`
@@ -121,7 +123,12 @@ export class IssueCliApp {
       gh: Github,
       @Inject(IS_PRERENDER) public isPrerender: boolean,
       @Inject(IS_POST_LOGIN) isPostLogin:boolean,
-      location:Location) {
+      location:Location,
+      db:Database) {
+        console.log('db', db);
+        db.open('issue-zero-app').subscribe((v) => {
+          console.log('v', v);
+        })
     /**
      * Check login state and redirect to appropriate
      * page: Login or Issues route.

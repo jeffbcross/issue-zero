@@ -1,7 +1,7 @@
 import {Component, ChangeDetectionStrategy, OnInit} from 'angular2/core';
 import {Location, ROUTER_DIRECTIVES} from 'angular2/router';
 import {Observable} from 'rxjs/Observable';
-import {ReplaySubject} from 'rxjs/subject/ReplaySubject';
+import {BehaviorSubject} from 'rxjs/subject/BehaviorSubject';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 
 import {IssueListToolbar} from './toolbar/toolbar';
@@ -9,7 +9,7 @@ import {IssueRow} from './issue-row/issue-row';
 import {RepoSelectorRow} from './repo-selector-row/repo-selector-row';
 
 import {GithubObjects, Repo, User} from '../../github/types';
-import {Github} from '../../github/github';
+import {Github, Issue, IssueList} from '../../github/github';
 import {FilterStore, Filter, FilterObject, generateQuery} from '../../filter-store.service';
 
 @Component({
@@ -27,7 +27,8 @@ import {FilterStore, Filter, FilterObject, generateQuery} from '../../filter-sto
       <issue-row
         *ngFor="#issue of issues | async"
         [ngForTrackBy]="'url'"
-        [issue]="issue">
+        [issue]="issue"
+        (close)="issueList.close(issue)">
       </issue-row>
     </md-list>
   `,
@@ -37,7 +38,8 @@ import {FilterStore, Filter, FilterObject, generateQuery} from '../../filter-sto
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class List implements OnInit {
-  issues: Observable<Object[]>;
+  issueList: Observable<IssueList>;
+  issues: Observable<Issue[]>;
   repos: Observable<Repo[]>;
   repoSelection: Observable<Repo>;
   constructor(
@@ -54,11 +56,18 @@ export class List implements OnInit {
      */
     this.repoSelection = this.gh.getRepo(`${org}/${repo}`);
 
-    this.issues = this.filterStore.getFilter(`${org}/${repo}`).changes
+    /**
+     * This is here so that the IssueList service can be used to close the issue,
+     * and can automatically update the collection.
+     */
+    this.issueList = this.filterStore.getFilter(`${org}/${repo}`).changes
       .map((filter:FilterObject) => generateQuery(filter))
       .switchMap((query:string) => {
-        return this.gh.getIssues(query)
+        return this.gh.getIssues(query);
       });
+
+    this.issues = this.issueList
+      .flatMap((issueList:IssueList) =>  issueList.issues);
   }
 
   getSmallAvatar(repo:Repo):string {

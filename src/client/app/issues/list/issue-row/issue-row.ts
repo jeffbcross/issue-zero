@@ -1,6 +1,8 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from 'angular2/core';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
-import {Github} from '../../../github/github';
+import {Github, Issue} from '../../../github/github';
+
+import {Database} from '@ngrx/db';
 
 declare var Hammer;
 
@@ -16,10 +18,10 @@ declare var Hammer;
       </div>
     </div>
     <md-list-item (touchmove)="onTouchMove($event)" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
-      <img md-list-avatar [src]="issue.user.avatar_url + '&s=40'" alt="{{issue.user.login}} logo">
+      <img md-list-avatar [src]="issue.avatar + '&s=40'" alt="{{issue.userName}} logo">
       <span md-line> {{issue.title}} </span>
       <p md-line class="secondary">
-        @{{issue.user.login}}
+        @{{issue.userName}}
         -
         {{issue.body}}
       </p>
@@ -71,7 +73,8 @@ declare var Hammer;
   pipes: []
 })
 export class IssueRow implements AfterViewInit {
-  @Input('issue') issue:any;
+  @Input('issue') issue:Issue;
+  @Output('close') close = new EventEmitter();
   touchStartCoords: {x:number, y:number};
   listItemNativeEl:HTMLElement;
   triageNativeEl:HTMLElement;
@@ -131,9 +134,6 @@ export class IssueRow implements AfterViewInit {
       console.log('triage');
     });
 
-    hammerEl.on('swipeleft', () => {
-      // TODO(jeffbcross): update the list of issues after removing one
-      this.gh.closeIssue(this.issue).subscribe(() => {});
-    });
+    hammerEl.on('swipeleft', (evt) => this.close.next(evt));
   }
 }

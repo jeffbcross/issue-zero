@@ -1,12 +1,14 @@
 import {AngularFire, FirebaseAuthState} from 'angularfire2';
 import {Inject, Injectable} from 'angular2/core';
-import {Http} from 'angular2/http';
+import {Http, Response} from 'angular2/http';
 import {Observable} from 'rxjs/Observable';
 import {ScalarObservable} from 'rxjs/observable/ScalarObservable';
 import {ErrorObservable} from 'rxjs/observable/ErrorObservable';
+import {BehaviorSubject} from 'rxjs/subject/BehaviorSubject';
 
 import {User, Issue as GHIssue, Repo} from './types';
 import {LOCAL_STORAGE} from '../config';
+import {Database} from '@ngrx/db';
 
 const GITHUB_API = 'https://api.github.com';
 
@@ -21,7 +23,8 @@ export class Github {
   constructor(
     private _http:Http,
     @Inject(LOCAL_STORAGE) private _localStorage:LocalStorage,
-    private _af:AngularFire) {}
+    private _af:AngularFire,
+    private _db:Database) {}
 
   // TODO(jeffbcross): don't use error paths here
   fetch(path:string, params?: string): Observable<Repo[]> {
@@ -40,12 +43,25 @@ export class Github {
       .switchMap((url:string) => this._http.get(url).map((res) => res.json()));
   }
 
-  getIssues(query:string):Observable<Object[]> {
+  getIssues(query:string):Observable<IssueList> {
+    this._db.changes.subscribe(v => console.log('changes', v));
     return this._af.auth
       .filter(auth => auth !== null && auth.github)
       .map((auth:FirebaseAuthState) => `${GITHUB_API}/search/issues?q=${query}&access_token=${auth.github.accessToken}`)
-      .switchMap((url:string) => this._http.get(url)
-        .map(res => res.json().items));
+      .switchMap((url:string) => this._http.get(url).map(res => res.json().items))
+        .flatMap((issues:GHIssue[]) => {
+          return this._db.insert('issues', issues).toArray()
+            .do(v => console.log('done inserting', v))
+            .flatMap(v => {
+              return this._db.query('issues').toArray().do(v => console.log('query v', v));
+            })
+            .map(v => issues);
+        })
+        .map((issues:GHIssue[]) => {
+          return issues.map((issue:GHIssue) => {
+            return new Issue(issue, this._af, this._http);
+          })})
+      .map((issues:Issue[]) => new IssueList(issues));
   }
 
   closeIssue(issue:GHIssue): Observable<any> {
@@ -108,6 +124,20 @@ export class Github {
   }
 }
 
+export class IssueList {
+  issues: BehaviorSubject<Issue[]>;
+  constructor(issues:Issue[]) {
+    this.issues = new BehaviorSubject(issues);
+  }
+
+  close(issue: Issue): Observable<any> {
+    return this.issues
+      .map((issues: Issue[]) => issues
+        .filter((i:Issue) => i === issue)[0])
+      .switchMap((issue:Issue) => issue.close());
+  }
+}
+
 export class Issue {
   org: string;
   repo: string;
@@ -122,12 +152,12 @@ export class Issue {
     this.userName = login;
     this.avatar = avatar_url;
     this.number = number;
-    var [url, org, repo, num] = /\/([a-z0-9\-]*)\/([a-z0-9\-]*)\/issues\/([0-9]*)$/.exec(url);
+    var [url, org, repo, num] = /\/([a-z0-9\-]*)\/([a-z0-9\-]*)\/issues\/([0-9]*)$/i.exec(url);
     this.org = org;
     this.repo = repo;
   }
 
-  close() {
+  close(): Observable<any> {
     return this._af.auth
       .filter(auth => auth !== null && auth.github)
       .map((auth:FirebaseAuthState) => `${GITHUB_API}/repos/${this.org}/${this.repo}/issues/${this.number}?access_token=${auth.github.accessToken}`)
