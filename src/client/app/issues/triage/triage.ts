@@ -107,23 +107,13 @@ export class Triage {
       .map((issues:Issue[]) => issues
         .filter((issue:Issue) => {
           console.log('filtering', issue);
-          return issue.org === org && issue.repo === repo && issue.number === parseInt(routeParams.get('id'), 10)
+          return issue.org === org && issue.repo === repo && issue.number === parseInt(routeParams.get('number'), 10)
         })[0]
       )
-      // .filter((i:Issue) => !!i)
-      // .do((issue) => {
-        // console.log('issue', issue);
-        // this.labelsToApply = issue.labels.reduce((prev: any, curr: Label) => {
-          // prev[curr.name] = true;
-          // return prev;
-        // }, this.labelsToApply);
-
-        // console.log('labelsToApply', this.labelsToApply);
-      // })
       .subscribe((issue:Issue) => {
         this.issue = issue;
       });
-    this.gh.getIssue(org, repo, routeParams.get('id'))
+    this.gh.getIssue(org, repo, routeParams.get('number'))
       .subscribe((issue:Issue) => {
         this.store.dispatch({
           type: 'AddIssues',

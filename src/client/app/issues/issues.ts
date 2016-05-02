@@ -12,7 +12,7 @@ import {Triage} from './triage/triage';
 @RouteConfig([
   {path: '/list', name: 'List', component: List, useAsDefault: true},
   {path: '/filter', name: 'Filter', component: Filter},
-  {path: '/triage/:id', name: 'Triage', component: Triage},
+  {path: '/triage/:number', name: 'Triage', component: Triage},
 ])
 export class Issues {
   constructor() {}
