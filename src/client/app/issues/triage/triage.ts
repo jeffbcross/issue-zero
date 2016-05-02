@@ -1,5 +1,5 @@
 import {Component} from 'angular2/core';
-import {RouteParams} from 'angular2/router';
+import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {MdButton} from '@angular2-material/button';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 import {MdCheckbox} from '@angular2-material/checkbox';
@@ -13,22 +13,26 @@ import {AppState} from '../../store/store';
 
 @Component({
   template: `
+    <button md-icon-button [routerLink]="['/Issues', {org: org, repo: repo}, 'List']">
+      <i class="material-icons">arrow_back</i>
+    </button>
     Issue {{issue?.number}}
     <form>
-      <md-list>
+      <h3>Labels</h3>
+      <md-list dense>
         <md-list-item *ngFor="#label of labels | async">
           <md-checkbox>
             {{label.name}}
           </md-checkbox>
         </md-list-item>
       </md-list>
-      <md-button>
+      <button md-button>
         Update
-      </md-button>
+      </button>
     </form>
   `,
   providers: [RepoParams],
-  directives: [MD_LIST_DIRECTIVES, MdButton, MdCheckbox]
+  directives: [MD_LIST_DIRECTIVES, MdButton, MdCheckbox, ROUTER_DIRECTIVES]
 })
 export class Triage {
   org: string;
