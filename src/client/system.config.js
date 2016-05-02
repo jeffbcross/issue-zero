@@ -65,6 +65,11 @@ System.config({
       format: 'cjs',
       defaultExtension: 'js',
       main: 'list.js'
+    },
+    '@angular2-material/checkbox': {
+      format: 'cjs',
+      defaultExtension: 'js',
+      main: 'checkbox.js'
     }
   }
 });

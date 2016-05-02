@@ -52,6 +52,16 @@ export class Github {
           }))
   }
 
+  getIssue(org:string, repo:string, number:number | string): Observable<Issue> {
+    return this._af.auth
+      .filter(auth => auth !== null && auth.github)
+      .map((auth:FirebaseAuthState) => `${GITHUB_API}/repos/${org}/${repo}/issues/${number}?access_token=${auth.github.accessToken}`)
+      .switchMap((url:string) => this._http.get(url).map(res => res.json()))
+        .map((issue:Issue) => {
+          return Object.assign({}, issue, {org, repo});
+        });
+  }
+
   closeIssue(issue:Issue): Observable<any> {
     var [url, org, repo, number] = /\/([a-z0-9\-]*)\/([a-z0-9\-]*)\/issues\/([0-9]*)$/.exec(issue.url);
     return this._af.auth
