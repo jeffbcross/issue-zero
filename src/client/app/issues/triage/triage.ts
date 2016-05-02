@@ -22,24 +22,42 @@ class IsChecked {
 
 @Component({
   template: `
-    <button md-icon-button [routerLink]="['/Issues', {org: org, repo: repo}, 'List']">
-      <i class="material-icons">arrow_back</i>
-    </button>
-    Issue {{issue?.number}}
-    <form>
-      <h3>Labels</h3>
-      <md-list dense>
-        <md-list-item *ngFor="#label of labels | async">
-          <md-checkbox (change)="labelChanged(label, $event)" [checked]="label | isChecked:issue">
-            {{label.name}}
-          </md-checkbox>
-        </md-list-item>
-      </md-list>
-      <button md-button (click)="updateIssue()">
-        Update
-      </button>
-    </form>
+    <div *ngIf="issue">
+      <h3>
+        <button md-icon-button [routerLink]="['/Issues', {org: org, repo: repo}, 'List']">
+          <i class="material-icons">arrow_back</i>
+        </button>
+        <span class="issue-number">
+          #{{issue?.number}}
+        </span>
+        {{issue?.title}}
+      </h3>
+      <p>
+        {{issue?.body}}
+      </p>
+      <form>
+        <h3>Labels</h3>
+        <md-list dense>
+          <md-list-item *ngFor="#label of labels | async">
+            <md-checkbox (change)="labelChanged(label, $event)" [checked]="label | isChecked:issue">
+              {{label.name}}
+            </md-checkbox>
+          </md-list-item>
+        </md-list>
+        <button md-button (click)="updateIssue()">
+          Save
+        </button>
+        <button md-button color="warn" [routerLink]="['/Issues', {org: org, repo: repo}, 'List']">
+          Cancel
+        </button>
+      </form>
+    </div>
   `,
+  styles: [`
+    .issue-number {
+      color: rgba(0,0,0,0.54);
+    }
+  `],
   providers: [RepoParams],
   directives: [MD_LIST_DIRECTIVES, MdButton, MdCheckbox, ROUTER_DIRECTIVES],
   pipes: [IsChecked]
