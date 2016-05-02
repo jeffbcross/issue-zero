@@ -21,7 +21,7 @@ import {AppState} from '../../store/store';
       <h3>Labels</h3>
       <md-list dense>
         <md-list-item *ngFor="#label of labels | async">
-          <md-checkbox>
+          <md-checkbox [checked]="isChecked(label)">
             {{label.name}}
           </md-checkbox>
         </md-list-item>
@@ -69,5 +69,13 @@ export class Triage {
           payload: [issue]
         });
       });
+  }
+
+  isChecked(label: Label): boolean {
+    this.issue.labels.filter(l => {
+      console.log('l.name', l.name, 'label.name', label.name)
+      return l.name === label.name
+    })
+    return this.issue ? this.issue.labels.filter(l => l.name === label.name).length === 1 : false;
   }
 }
