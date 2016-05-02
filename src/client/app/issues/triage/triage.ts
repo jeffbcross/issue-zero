@@ -1,4 +1,4 @@
-import {Component} from 'angular2/core';
+import {Component, Pipe} from 'angular2/core';
 import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {MdButton} from '@angular2-material/button';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
@@ -11,6 +11,15 @@ import {Issue, Label} from '../../github/types';
 import {RepoParams} from '../../repo-params/repo-params';
 import {AppState} from '../../store/store';
 
+@Pipe({
+  name: 'isChecked'
+})
+class IsChecked {
+  transform (label: Label, [issue]: [Issue]): boolean {
+    return issue ? issue.labels.filter(l => l.name === label.name).length === 1 : false;
+  }
+}
+
 @Component({
   template: `
     <button md-icon-button [routerLink]="['/Issues', {org: org, repo: repo}, 'List']">
@@ -21,24 +30,26 @@ import {AppState} from '../../store/store';
       <h3>Labels</h3>
       <md-list dense>
         <md-list-item *ngFor="#label of labels | async">
-          <md-checkbox [checked]="isChecked(label)">
+          <md-checkbox (change)="labelChanged(label, $event)" [checked]="label | isChecked:issue">
             {{label.name}}
           </md-checkbox>
         </md-list-item>
       </md-list>
-      <button md-button>
+      <button md-button (click)="updateIssue()">
         Update
       </button>
     </form>
   `,
   providers: [RepoParams],
-  directives: [MD_LIST_DIRECTIVES, MdButton, MdCheckbox, ROUTER_DIRECTIVES]
+  directives: [MD_LIST_DIRECTIVES, MdButton, MdCheckbox, ROUTER_DIRECTIVES],
+  pipes: [IsChecked]
 })
 export class Triage {
   org: string;
   repo: string;
   labels: Observable<Label[]>;
   issue: Issue;
+  labelsToApply: {[key:string]: boolean} = {};
   constructor(
     private repoParams: RepoParams,
     private gh: Github,
@@ -59,6 +70,16 @@ export class Triage {
           return issue.org === org && issue.repo === repo && issue.number === parseInt(routeParams.get('id'), 10)
         })[0]
       )
+      // .filter((i:Issue) => !!i)
+      // .do((issue) => {
+        // console.log('issue', issue);
+        // this.labelsToApply = issue.labels.reduce((prev: any, curr: Label) => {
+          // prev[curr.name] = true;
+          // return prev;
+        // }, this.labelsToApply);
+
+        // console.log('labelsToApply', this.labelsToApply);
+      // })
       .subscribe((issue:Issue) => {
         this.issue = issue;
       });
@@ -71,11 +92,21 @@ export class Triage {
       });
   }
 
-  isChecked(label: Label): boolean {
-    this.issue.labels.filter(l => {
-      console.log('l.name', l.name, 'label.name', label.name)
-      return l.name === label.name
-    })
-    return this.issue ? this.issue.labels.filter(l => l.name === label.name).length === 1 : false;
+  updateIssue() {
+    console.log(this.labelsToApply);
+    var patch = {
+      labels: Object.keys(this.labelsToApply)
+    };
+
+    this.gh.patchIssue(this.org, this.repo, this.issue.number, patch)
+      .subscribe()
+  }
+
+  labelChanged (label: Label, value: boolean) {
+    if (value) {
+      this.labelsToApply[label.name] = value;
+    } else {
+      delete this.labelsToApply[label.name];
+    }
   }
 }
