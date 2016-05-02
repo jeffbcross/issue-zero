@@ -2,6 +2,7 @@ import {Component, Pipe} from 'angular2/core';
 import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {MdButton} from '@angular2-material/button';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
+import {MdToolbar} from '@angular2-material/toolbar';
 import {MdCheckbox} from '@angular2-material/checkbox';
 import {Observable} from 'rxjs/Observable';
 import {Store} from '@ngrx/store';
@@ -20,19 +21,31 @@ class IsChecked {
   }
 }
 
+@Pipe({
+  name: 'toDate'
+})
+class ToDate {
+  transform(date:string): Date {
+    return new Date(date);
+  }
+}
+
 @Component({
   template: `
-    <div *ngIf="issue">
-      <h3>
-        <button md-icon-button [routerLink]="['/Issues', {org: org, repo: repo}, 'List']">
-          <i class="material-icons">arrow_back</i>
-        </button>
-        <span class="issue-number">
-          #{{issue?.number}}
-        </span>
-        {{issue?.title}}
-      </h3>
-      <p>
+    <md-toolbar>
+      <button md-icon-button [routerLink]="['/Issues', {org: org, repo: repo}, 'List']">
+        <i class="material-icons">arrow_back</i>
+      </button>
+      {{issue?.title}}
+      <span class="issue-number">
+        #{{issue?.number}}
+      </span>
+    </md-toolbar>
+    <div *ngIf="issue" class="view-container">
+      <p class="user-and-date">
+        @{{issue.user.login}} on {{issue.created_at | toDate | date}}:
+      </p>
+      <p class="description">
         {{issue?.body}}
       </p>
       <form>
@@ -54,13 +67,22 @@ class IsChecked {
     </div>
   `,
   styles: [`
+    .description {
+      font-size: 1.2em;
+    }
+    .view-container {
+      margin: 16px;
+    }
     .issue-number {
+      color: rgba(0,0,0,0.54);
+    }
+    .user-and-date {
       color: rgba(0,0,0,0.54);
     }
   `],
   providers: [RepoParams],
-  directives: [MD_LIST_DIRECTIVES, MdButton, MdCheckbox, ROUTER_DIRECTIVES],
-  pipes: [IsChecked]
+  directives: [MD_LIST_DIRECTIVES, MdButton, MdCheckbox, ROUTER_DIRECTIVES, MdToolbar],
+  pipes: [IsChecked, ToDate]
 })
 export class Triage {
   org: string;
