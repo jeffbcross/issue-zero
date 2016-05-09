@@ -1,8 +1,9 @@
 declare var preboot;
-import {provide} from 'angular2/core';
-import {HTTP_PROVIDERS} from 'angular2/http';
-import {bootstrap} from 'angular2/platform/browser';
-import {ROUTER_PROVIDERS, APP_BASE_HREF} from 'angular2/router';
+import {provide} from '@angular/core';
+import {HTTP_PROVIDERS} from '@angular/http';
+import {bootstrap} from '@angular/platform-browser-dynamic';
+import {APP_BASE_HREF} from '@angular/common';
+import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
 import {FIREBASE_PROVIDERS, defaultFirebase, AuthMethods, AuthProviders, firebaseAuthConfig} from 'angularfire2';
 import {provideStore} from '@ngrx/store';
 

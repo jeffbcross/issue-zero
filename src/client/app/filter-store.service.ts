@@ -1,6 +1,6 @@
-import {Inject, Injectable} from 'angular2/core';
+import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {BehaviorSubject} from 'rxjs/subject/BehaviorSubject';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Operator} from 'rxjs/Operator';
 
 import {LOCAL_STORAGE} from './config';

@@ -1,6 +1,6 @@
 import {AngularFire, FirebaseAuthState} from 'angularfire2';
-import {Inject, Injectable} from 'angular2/core';
-import {Http} from 'angular2/http';
+import {Inject, Injectable} from '@angular/core';
+import {Http} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
 import {ScalarObservable} from 'rxjs/observable/ScalarObservable';
 import {ErrorObservable} from 'rxjs/observable/ErrorObservable';

@@ -1,5 +1,6 @@
-import {Component, OnInit} from 'angular2/core';
-import {Location, ROUTER_DIRECTIVES, RouteParams} from 'angular2/router';
+import {Component, OnInit} from '@angular/core';
+import {Location} from '@angular/common';
+import {ROUTER_DIRECTIVES, RouteParams} from '@angular/router-deprecated';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 import {MdToolbar} from '@angular2-material/toolbar';
 import {Observable} from 'rxjs/Observable';

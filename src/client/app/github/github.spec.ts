@@ -11,12 +11,12 @@ import {
   TestComponentBuilder,
   beforeEach,
   beforeEachProviders
-} from 'angular2/testing';
-import {provide} from 'angular2/core';
+} from '@angular/testing';
+import {provide} from '@angular/core';
 import {AngularFire, FIREBASE_PROVIDERS, defaultFirebase} from 'angularfire2';
 import {Github} from './github';
-import {HTTP_PROVIDERS, XHRBackend, Response, BaseResponseOptions} from 'angular2/http';
-import {MockBackend, MockConnection} from 'angular2/http/testing';
+import {HTTP_PROVIDERS, XHRBackend, Response, BaseResponseOptions} from '@angular/http';
+import {MockBackend, MockConnection} from '@angular/http/testing';
 import {LOCAL_STORAGE} from '../config';
 import {ScalarObservable} from 'rxjs/observable/ScalarObservable';
 import {MockLocalStorage} from '../testing/mocks';

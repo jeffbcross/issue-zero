@@ -9,7 +9,7 @@ import {
   TestComponentBuilder,
   beforeEachProviders
 } from 'angular2/testing';
-import {provide} from 'angular2/core';
+import {provide} from '@angular/core';
 import {RepoParams} from './repo-params';
 
 

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from 'angular2/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 import {Github} from '../../../github/github';
 import {Issue} from '../../../github/types';

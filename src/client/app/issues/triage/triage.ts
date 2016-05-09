@@ -1,5 +1,5 @@
-import {Component, Pipe} from 'angular2/core';
-import {RouteParams, ROUTER_DIRECTIVES, Router} from 'angular2/router';
+import {Component, Pipe} from '@angular/core';
+import {RouteParams, ROUTER_DIRECTIVES, Router} from '@angular/router-deprecated';
 import {MdButton} from '@angular2-material/button';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 import {MdToolbar} from '@angular2-material/toolbar';

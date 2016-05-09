@@ -1,7 +1,7 @@
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 import {AngularFire} from 'angularfire2';
 import {MdButton} from '@angular2-material/button';
-import {CanActivate} from 'angular2/router';
+import {CanActivate} from '@angular/router-deprecated';
 
 import {FB_URL} from '../config';
 

@@ -1,7 +1,6 @@
-import {Component, ChangeDetectionStrategy, OnInit, Pipe, PipeTransform} from 'angular2/core';
-import {ROUTER_DIRECTIVES, Router} from 'angular2/router';
+import {Component, ChangeDetectionStrategy, OnInit, Pipe, PipeTransform} from '@angular/core';
+import {ROUTER_DIRECTIVES, Router} from '@angular/router-deprecated';
 import {Observable} from 'rxjs/Observable';
-import {BehaviorSubject} from 'rxjs/subject/BehaviorSubject';
 import {Subscription} from 'rxjs/Subscription';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 import {Store} from '@ngrx/store';

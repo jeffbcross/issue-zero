@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from 'angular2/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 
 @Component({

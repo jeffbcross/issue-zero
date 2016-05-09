@@ -1,5 +1,5 @@
-import {Injectable} from 'angular2/core';
-import {Location} from 'angular2/router';
+import {Injectable} from '@angular/core';
+import {Location} from '@angular/common';
 
 
 @Injectable()
