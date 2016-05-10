@@ -8,10 +8,10 @@ import {
   // expect,
   inject,
   injectAsync,
-  TestComponentBuilder,
   beforeEach,
   beforeEachProviders
-} from '@angular/testing';
+} from '@angular/core/testing';
+import {TestComponentBuilder} from '@angular/compiler/testing';
 import {provide} from '@angular/core';
 import {AngularFire, FIREBASE_PROVIDERS, defaultFirebase} from 'angularfire2';
 import {Github} from './github';

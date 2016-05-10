@@ -16,11 +16,11 @@ var concat = require('broccoli-concat');
  * Tracking issue: https://github.com/angular/issue-zero/issues/32
  */
 global.Event = function () {};
-const AppShellPlugin = require('./broccoli-app-shell.ts');
+const AppShellPlugin = require('angular2-broccoli-prerender').AppShellPlugin;
 const ServiceWorkerPlugin = require('./broccoli-service-worker.ts');
 
 module.exports = function(defaults) {
-  var app = new Angular2App(defaults, {
+  var app = new Angular2App(defaults || {}, {
     vendorNpmFiles: [
       'angularfire2/**/*.js',
       'firebase/lib/firebase-web.js',
@@ -34,8 +34,8 @@ module.exports = function(defaults) {
   });
   const ngTree = app.toTree();
   var swTree = new ServiceWorkerPlugin(ngTree);
-  var appShellIndex = new AppShellPlugin(ngTree, 'index.html', 'app/issue-cli');
-  var concatExtrasTree = new Funnel('src/client', {
+  var appShellIndex = new AppShellPlugin(ngTree, 'index.html', 'main-app-shell');
+  var concatExtrasTree = new Funnel('src', {
     include: [
       'system.config.js',
       'auto-start.js'

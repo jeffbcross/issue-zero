@@ -6,7 +6,7 @@ import {
   ddescribe,
   inject,
   injectAsync
-} from '@angular/testing';
+} from '@angular/core/testing';
 import {provide} from '@angular/core';
 import 'rxjs/add/operator/take';
 

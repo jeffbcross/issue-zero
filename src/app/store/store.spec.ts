@@ -6,9 +6,9 @@ import {
   expect,
   inject,
   injectAsync,
-  TestComponentBuilder,
   beforeEachProviders
-} from '@angular/testing';
+} from '@angular/core/testing';
+import {TestComponentBuilder} from '@angular/compiler/testing';
 import {provide} from '@angular/core';
 import {issues, repos, labels, users, filters} from './store';
 
