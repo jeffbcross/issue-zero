@@ -17,7 +17,6 @@ import {ArrayObservable} from 'rxjs/observable/ArrayObservable';
 // import {RepoSelectorComponent} from './+repo-selector/index';
 import { APP_SHELL_DIRECTIVES, IS_PRERENDER } from '@angular/app-shell';
 
-console.log('AF', AngularFire)
 
 @Component({
   moduleId: module.id,
@@ -116,15 +115,14 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
   providers: []
 })
 export class IssueZeroAppComponent {
-  title = 'issue-zero works!';
-  // af: AngularFire;
-  constructor() {
-    //@Inject(AngularFire) af: AngularFire
-        // this.af = af;
-        // router: Router,
-      // gh: Github,
-      // @Inject(IS_PRERENDER) public isPrerender: boolean
-      // , @Inject(IS_POST_LOGIN) isPostLogin:boolean,
+  constructor(
+      @Inject(IS_PRERENDER) isPrerender: boolean,
+      public af: AngularFire
+      // router: Router,
+      // @Inject(IS_POST_LOGIN) isPostLogin:boolean,
       // location:Location
+    ) {
+        console.log('af', this.af, AngularFire);
+      // gh: Github
       }
 }

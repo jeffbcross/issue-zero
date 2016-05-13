@@ -6,7 +6,7 @@ import {
   ORIGIN_URL
 } from 'angular2-universal';
 import { APP_SHELL_BUILD_PROVIDERS } from '@angular/app-shell';
-import { FIREBASE_PROVIDERS } from 'angularfire2';
+import { FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
 
 export const options = {
   directives: [
@@ -20,6 +20,8 @@ export const options = {
   ],
   providers: [
     APP_SHELL_BUILD_PROVIDERS,
+    FIREBASE_PROVIDERS,
+    defaultFirebase('https://issue-zero.firebaseio.com'),
     // What URL should Angular be treating the app as if navigating
     provide(APP_BASE_HREF, {useValue: '/'}),
     provide(REQUEST_URL, {useValue: '/'})
