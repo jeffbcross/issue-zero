@@ -16,7 +16,7 @@ import {ArrayObservable} from 'rxjs/observable/ArrayObservable';
 // import {Repo} from './github/types';
 // import {RepoSelectorComponent} from './+repo-selector/index';
 import { APP_SHELL_DIRECTIVES, IS_PRERENDER } from '@angular/app-shell';
-
+import { IS_POST_LOGIN } from './shared/config';
 
 @Component({
   moduleId: module.id,
@@ -107,7 +107,7 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
 </md-sidenav-layout>
 `,
   directives: [
-    // ROUTER_DIRECTIVES,
+    ROUTER_DIRECTIVES,
     MdToolbar, MD_CARD_DIRECTIVES, MD_SIDENAV_DIRECTIVES, MdButton,
     MdProgressCircle, APP_SHELL_DIRECTIVES
   ],
@@ -117,12 +117,11 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
 export class IssueZeroAppComponent {
   constructor(
       @Inject(IS_PRERENDER) isPrerender: boolean,
-      public af: AngularFire
-      // router: Router,
-      // @Inject(IS_POST_LOGIN) isPostLogin:boolean,
-      // location:Location
+      public af: AngularFire,
+      public router: Router,
+      @Inject(IS_POST_LOGIN) isPostLogin:boolean,
+      location:Location
     ) {
-        console.log('af', this.af, AngularFire);
       // gh: Github
       }
 }

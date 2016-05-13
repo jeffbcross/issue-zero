@@ -3,10 +3,45 @@
  **********************************************************************************************/
 /** Map relative paths to URLs. */
 const map: any = {
+  '@angular2-material': 'vendor/@angular2-material',
+  'angularfire2': 'vendor/angularfire2',
+  'firebase': 'vendor/firebase/lib/firebase-web.js'
 };
 
 /** User packages configuration. */
 const packages: any = {
+  'config': {
+    main: 'config',
+    defaultExtension: 'js'
+  },
+  'angularfire2': {
+    defaultExtension: 'js',
+    main: 'angularfire2'
+  },
+  '@angular2-material/core': {
+    defaultExtension: 'js',
+    main: 'core'
+  },
+  '@angular2-material/card': {
+    defaultExtension: 'js',
+    main: 'card'
+  },
+  '@angular2-material/toolbar': {
+    defaultExtension: 'js',
+    main: 'toolbar'
+  },
+  '@angular2-material/button': {
+    defaultExtension: 'js',
+    main: 'button'
+  },
+  '@angular2-material/progress-circle': {
+    defaultExtension: 'js',
+    main: 'progress-circle'
+  },
+  '@angular2-material/sidenav': {
+    defaultExtension: 'js',
+    main: 'sidenav'
+  }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,16 +78,7 @@ const barrels: string[] = [
 
 const cliSystemConfigPackages: any = {};
 barrels.forEach((barrelName: string) => {
-  var material;
-  if (material = /\@angular2\-material\/(.*)/.exec(barrelName)) {
-    cliSystemConfigPackages[barrelName] = {
-      main: `${material[1]}`,
-      defaultExtension: 'js'
-    };
-  } else {
-    cliSystemConfigPackages[barrelName] = { main: 'index' };
-  }
-  console.log('packages',cliSystemConfigPackages);
+  cliSystemConfigPackages[barrelName] = { main: 'index' };
 });
 
 /** Type declaration for ambient System. */
@@ -63,17 +89,9 @@ System.config({
   map: {
     '@angular': 'vendor/@angular',
     'rxjs': 'vendor/rxjs',
-    'main': 'main.js',
-    '@angular2-material': 'vendor/@angular2-material',
-    'angularfire2': 'vendor/angularfire2',
-    'firebase': 'vendor/firebase/lib/firebase-web.js'
+    'main': 'main.js'
   },
-  packages: Object.assign({}, cliSystemConfigPackages, {
-    'angularfire2': {
-      defaultExtension: 'js',
-      main: 'angularfire2'
-    }
-  })
+  packages: cliSystemConfigPackages
 });
 
 // Apply the user's configuration.
