@@ -10,7 +10,7 @@ import {
 import { APP_SHELL_BUILD_PROVIDERS } from '@angular/app-shell';
 import { FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
 
-import {FB_URL} from './app/shared/config';
+import {FB_URL, IS_POST_LOGIN} from './app/shared/config';
 
 export const options = {
   directives: [
@@ -28,6 +28,9 @@ export const options = {
     APP_SHELL_BUILD_PROVIDERS,
     FIREBASE_PROVIDERS,
     defaultFirebase(FB_URL),
+    provide(IS_POST_LOGIN, {
+      useValue: false
+    }),
     // What URL should Angular be treating the app as if navigating
     provide(APP_BASE_HREF, {useValue: '/'}),
     provide(REQUEST_URL, {useValue: '/'})
