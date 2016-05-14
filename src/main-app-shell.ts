@@ -34,8 +34,6 @@ export const options = {
     // What URL should Angular be treating the app as if navigating
     provide(APP_BASE_HREF, {useValue: '/'}),
     provide(REQUEST_URL, {useValue: '/'})
-  ],
-  async: true,
-  preboot: false
+  ]
 };
 
