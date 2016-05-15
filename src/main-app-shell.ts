@@ -8,9 +8,11 @@ import {
   NODE_LOCATION_PROVIDERS
 } from 'angular2-universal';
 import { APP_SHELL_BUILD_PROVIDERS } from '@angular/app-shell';
-import { FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
+import { AngularFire, FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
 
 import {FB_URL, IS_POST_LOGIN} from './app/shared/config';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/empty';
 
 export const options = {
   directives: [
@@ -28,6 +30,11 @@ export const options = {
     APP_SHELL_BUILD_PROVIDERS,
     FIREBASE_PROVIDERS,
     defaultFirebase(FB_URL),
+    provide(AngularFire, {
+      useValue: {
+        auth: Observable.empty()
+      }
+    }),
     provide(IS_POST_LOGIN, {
       useValue: false
     }),
