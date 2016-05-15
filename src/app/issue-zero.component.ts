@@ -2,6 +2,7 @@ import {Component, Inject} from '@angular/core';
 import {RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, Router} from '@angular/router-deprecated';
 import {Location} from '@angular/common';
 import {AngularFire, FirebaseAuthState} from 'angularfire2';
+import { LoginComponent } from './+login';
 
 import {MdButton} from '@angular2-material/button';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
@@ -12,7 +13,6 @@ import {MdToolbar} from '@angular2-material/toolbar';
 import {Observable} from 'rxjs/Observable';
 import {ArrayObservable} from 'rxjs/observable/ArrayObservable';
 // import {Issues} from './issues/issues';
-// import {Login} from './login/login';
 import {GithubService} from './github.service';
 import {Repo} from './shared/types';
 // import {RepoSelectorComponent} from './+repo-selector/index';
@@ -111,6 +111,9 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
   pipes: [],
   providers: [MdIconRegistry]
 })
+@RouteConfig([
+  {path: '/login', name: 'Login', component: LoginComponent}
+])
 export class IssueZeroAppComponent {
   constructor(
       @Inject(IS_PRERENDER) isPrerender: boolean,
@@ -121,6 +124,49 @@ export class IssueZeroAppComponent {
       public gh:GithubService,
       mdIconRegistry:MdIconRegistry
     ) {
-      mdIconRegistry.addSvgIcon('menu', '/vendor/material-design-icons/navigation/svg/production/ic_menu_24px.svg')
+      mdIconRegistry.addSvgIcon('menu', '/vendor/material-design-icons/navigation/svg/production/ic_menu_24px.svg');
+      /**
+     * Check login state and redirect to appropriate
+     * page: Login or Issues route.
+     */
+    if (!isPrerender) {
+      // If the page was part of the Firebase OAuth flow (the successful login redirect),
+      // then short-circuit the auth observable.
+      ArrayObservable.of(isPostLogin)
+          .filter(v => v === true)
+          .concat(af.auth)
+          // Cast nulls to booleans
+          .map(v => !!v)
+          .distinctUntilChanged()
+          .do((loggedIn: boolean) => {
+            // If state is null (user not logged in) navigate to log in
+            if (loggedIn && (!location.path() || location.path() === '/login')) {
+              gh.fetch(`/user/repos`, 'affiliation=owner,collaborator&sort=updated')
+                .map((repos:Repo[]) => ({
+                  org: repos[0].owner.login,
+                  repo: repos[0].name
+                }))
+                .take(1)
+                .subscribe(config => router.navigate(['./Issues', config]));
+            } else if (!isPostLogin) {
+              router.navigate(['./Login']);
+            }
+          })
+          // Only emit if user is logged in (state is non-null)
+          .filter(state => !!state)
+          // Complete this Observable after successful login
+          .take(1)
+          // onLogoutObervable takes over once user is logged in.
+          // User will be redirected to login page whenever they log out.
+          .concat(af.auth
+                      // Keep this Observable alive for the duration of the app.
+                      .do((state: FirebaseAuthState) => {
+                        if (!state) {
+                          router.navigate(['./Login'])
+                        }
+                      }))
+          .subscribe();
+    }
+
     }
 }

@@ -20,16 +20,11 @@ interface LocalStorage {
 
 @Injectable()
 export class GithubService {
-  // _http:any = {};
-  _localStorage:any = {};
-  _af:any = {};
   constructor(
-    private _http:Http
-    // @Inject(LOCAL_STORAGE) private _localStorage:LocalStorage,
-    // private _af:AngularFire
-    ) {
-
-    }
+    private _http:Http,
+    @Inject(LOCAL_STORAGE) private _localStorage:LocalStorage,
+    private _af:AngularFire
+    ) {}
 
   // TODO(jeffbcross): don't use error paths here
   fetch(path:string, params?: string): any {//Observable<Repo[]> {
