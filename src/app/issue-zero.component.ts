@@ -2,11 +2,13 @@ import {Component, Inject} from '@angular/core';
 import {RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, Router} from '@angular/router-deprecated';
 import {Location} from '@angular/common';
 import {AngularFire, FirebaseAuthState} from 'angularfire2';
-import {MdToolbar} from '@angular2-material/toolbar';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
-import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav';
+
 import {MdButton} from '@angular2-material/button';
+import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
+import {MdIcon} from '@angular2-material/icon';
 import {MdProgressCircle} from '@angular2-material/progress-circle';
+import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav';
+import {MdToolbar} from '@angular2-material/toolbar';
 import {Observable} from 'rxjs/Observable';
 import {ArrayObservable} from 'rxjs/observable/ArrayObservable';
 // import {Issues} from './issues/issues';
@@ -16,6 +18,7 @@ import {Repo} from './shared/types';
 // import {RepoSelectorComponent} from './+repo-selector/index';
 import { APP_SHELL_DIRECTIVES, IS_PRERENDER } from '@angular/app-shell';
 import { IS_POST_LOGIN } from './shared/config';
+import { MdIconRegistry } from '@angular2-material/icon';
 
 @Component({
   moduleId: module.id,
@@ -26,13 +29,6 @@ md-toolbar button {
   background: transparent;
   outline: none;
   border: none;
-}
-md-sidenav-layout {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
 }
 md-sidenav {
   width: 200px;
@@ -59,7 +55,7 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
 }
 `],
   template: `
-<md-sidenav-layout [ngClass]="{'preRendered': isPrerender}">
+<md-sidenav-layout [ngClass]="{'preRendered': isPrerender}" fullscreen>
   <md-sidenav #sidenav>
     <div *shellNoRender>
       <md-card *ngIf="af.auth | async">
@@ -94,7 +90,9 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
   </md-sidenav>
   <md-toolbar color="primary">
     <md-progress-circle mode="indeterminate" *shellRender></md-progress-circle>
-    <button *shellNoRender (click)="sidenav.open()"><i class="material-icons">menu</i></button>
+    <button *shellNoRender (click)="sidenav.open()">
+      <md-icon svgIcon="menu">menu</md-icon>
+    </button>
 
     <span>Issue Zero</span>
   </md-toolbar>
@@ -108,10 +106,10 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
   directives: [
     ROUTER_DIRECTIVES,
     MdToolbar, MD_CARD_DIRECTIVES, MD_SIDENAV_DIRECTIVES, MdButton,
-    MdProgressCircle, APP_SHELL_DIRECTIVES
+    MdProgressCircle, APP_SHELL_DIRECTIVES, MdIcon
   ],
   pipes: [],
-  providers: []
+  providers: [MdIconRegistry]
 })
 export class IssueZeroAppComponent {
   constructor(
@@ -120,6 +118,9 @@ export class IssueZeroAppComponent {
       public router: Router,
       @Inject(IS_POST_LOGIN) isPostLogin:boolean,
       location:Location,
-      public gh:GithubService
-    ) {}
+      public gh:GithubService,
+      mdIconRegistry:MdIconRegistry
+    ) {
+      mdIconRegistry.addSvgIcon('menu', '/vendor/material-design-icons/navigation/svg/production/ic_menu_24px.svg')
+    }
 }

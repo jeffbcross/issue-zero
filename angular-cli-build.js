@@ -16,7 +16,7 @@ module.exports = function(defaults) {
       'angularfire2/**/*.js',
       'firebase/lib/firebase-web.js',
       'hammerjs/hammer.min.js',
-      'material-design-icons/iconfont/MaterialIcons-Regular.+(woff|woff2)',
+      'material-design-icons/navigation/svg/production/ic_menu_24px.svg',
       '@ngrx/**/*.js'
     ]
   });

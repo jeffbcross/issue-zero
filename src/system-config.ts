@@ -34,6 +34,10 @@ const packages: any = {
     defaultExtension: 'js',
     main: 'core'
   },
+  '@angular2-material/icon': {
+    defaultExtension: 'js',
+    main: 'icon'
+  },
   '@angular2-material/card': {
     defaultExtension: 'js',
     main: 'card'
