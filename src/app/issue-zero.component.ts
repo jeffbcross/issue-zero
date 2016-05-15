@@ -11,9 +11,8 @@ import {Observable} from 'rxjs/Observable';
 import {ArrayObservable} from 'rxjs/observable/ArrayObservable';
 // import {Issues} from './issues/issues';
 // import {Login} from './login/login';
-// import { IS_POST_LOGIN } from './config';
-// import {Github} from './github/github';
-// import {Repo} from './github/types';
+import {GithubService} from './github.service';
+import {Repo} from './shared/types';
 // import {RepoSelectorComponent} from './+repo-selector/index';
 import { APP_SHELL_DIRECTIVES, IS_PRERENDER } from '@angular/app-shell';
 import { IS_POST_LOGIN } from './shared/config';
@@ -120,8 +119,7 @@ export class IssueZeroAppComponent {
       public af: AngularFire,
       public router: Router,
       @Inject(IS_POST_LOGIN) isPostLogin:boolean,
-      location:Location
-    ) {
-      // gh: Github
-      }
+      location:Location,
+      public gh:GithubService
+    ) {}
 }

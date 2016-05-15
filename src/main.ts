@@ -1,10 +1,12 @@
 import { bootstrap } from '@angular/platform-browser-dynamic';
 import { enableProdMode, provide } from '@angular/core';
+import { HTTP_PROVIDERS } from '@angular/http';
 import { IssueZeroAppComponent, environment } from './app/';
 import { APP_SHELL_RUNTIME_PROVIDERS } from '@angular/app-shell';
 import { FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
 import { ROUTER_PROVIDERS } from '@angular/router-deprecated';
 import { FB_URL, IS_POST_LOGIN } from './app/shared/config';
+import { GithubService } from './app/github.service';
 
 if (environment.production) {
   enableProdMode();
@@ -22,4 +24,6 @@ bootstrap(IssueZeroAppComponent, [
   provide(IS_POST_LOGIN, {
     useValue: (<any>window).__IS_POST_LOGIN
   }),
+  GithubService,
+  HTTP_PROVIDERS
 ]);
