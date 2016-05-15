@@ -5,11 +5,23 @@
 const map: any = {
   '@angular2-material': 'vendor/@angular2-material',
   'angularfire2': 'vendor/angularfire2',
-  'firebase': 'vendor/firebase/lib/firebase-web.js'
+  'firebase': 'vendor/firebase/lib/firebase-web.js',
+  'hammerjs': 'vendor/hammerjs/hammer.js',
+  '@ngrx': 'vendor/@ngrx'
 };
 
 /** User packages configuration. */
 const packages: any = {
+  '@ngrx/db': {
+    format: 'cjs',
+    main: 'index.js',
+    defaultExtension: 'js'
+  },
+  '@ngrx/store': {
+    format: 'cjs',
+    main: 'index.js',
+    defaultExtension: 'js'
+  },
   'config': {
     main: 'config',
     defaultExtension: 'js'

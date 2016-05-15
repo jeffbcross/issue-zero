@@ -14,7 +14,10 @@ module.exports = function(defaults) {
       '@angular/**/*.js',
       '@angular2-material/**/*.+(js|map|css|svg)',
       'angularfire2/**/*.js',
-      'firebase/lib/firebase-web.js'
+      'firebase/lib/firebase-web.js',
+      'hammerjs/hammer.min.js',
+      'material-design-icons/iconfont/MaterialIcons-Regular.+(woff|woff2)',
+      '@ngrx/**/*.js'
     ]
   });
 };
