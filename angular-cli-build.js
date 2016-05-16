@@ -17,6 +17,8 @@ module.exports = function(defaults) {
       'firebase/lib/firebase-web.js',
       'hammerjs/hammer.min.js',
       'material-design-icons/navigation/svg/production/ic_menu_24px.svg',
+      'material-design-icons/navigation/svg/production/ic_arrow_back_24px.svg',
+      'material-design-icons/content/svg/production/ic_filter_list_24px.svg',
       '@ngrx/**/*.js'
     ]
   });

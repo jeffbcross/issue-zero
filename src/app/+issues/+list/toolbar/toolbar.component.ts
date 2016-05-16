@@ -5,6 +5,7 @@ import {
   Output
 } from '@angular/core';
 import { ROUTER_DIRECTIVES } from '@angular/router-deprecated';
+import { MdIcon } from '@angular2-material/icon';
 import {MdToolbar} from '@angular2-material/toolbar';
 import {MdButton} from '@angular2-material/button';
 
@@ -20,9 +21,9 @@ import {MdButton} from '@angular2-material/button';
         </button>
 
         <span class="fill-remaining-space"></span>
-        <i class="material-icons" [routerLink]="['/Issues', {org: repo.owner.login, repo: repo.name}, 'Filter']">
-          filter_list
-        </i>
+        <md-icon svgIcon="filter_list" [routerLink]="['/Issues', {org: repo.owner.login, repo: repo.name}, 'Filter']">
+          filter
+        </md-icon>
       </md-toolbar>
     </div>
   `,
@@ -37,7 +38,7 @@ import {MdButton} from '@angular2-material/button';
       margin-left: 16px;
     }
   `],
-  directives: [MdButton, MdToolbar, ROUTER_DIRECTIVES]
+  directives: [MdButton, MdIcon, MdToolbar, ROUTER_DIRECTIVES]
 })
 export class ToolbarComponent {
   @Input('repo') repo:any;

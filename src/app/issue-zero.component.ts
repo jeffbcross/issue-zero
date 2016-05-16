@@ -126,51 +126,53 @@ export class IssueZeroAppComponent {
       @Inject(IS_POST_LOGIN) isPostLogin:boolean,
       location:Location,
       public gh:GithubService,
-      mdIconRegistry:MdIconRegistry
-    ) {
-      mdIconRegistry.addSvgIcon('menu', '/vendor/material-design-icons/navigation/svg/production/ic_menu_24px.svg');
-      /**
-     * Check login state and redirect to appropriate
-     * page: Login or Issues route.
-     */
-    if (!isPrerender) {
-      // If the page was part of the Firebase OAuth flow (the successful login redirect),
-      // then short-circuit the auth observable.
-      ArrayObservable.of(isPostLogin)
-          .filter(v => v === true)
-          .concat(af.auth)
-          // Cast nulls to booleans
-          .map(v => !!v)
-          .distinctUntilChanged()
-          .do((loggedIn: boolean) => {
-            // If state is null (user not logged in) navigate to log in
-            if (loggedIn && (!location.path() || location.path() === '/login')) {
-              gh.fetch(`/user/repos`, 'affiliation=owner,collaborator&sort=updated')
-                .map((repos:Repo[]) => ({
-                  org: repos[0].owner.login,
-                  repo: repos[0].name
-                }))
-                .take(1)
-                .subscribe(config => router.navigate(['./Issues', config]));
-            } else if (!isPostLogin) {
-              router.navigate(['./Login']);
-            }
-          })
-          // Only emit if user is logged in (state is non-null)
-          .filter(state => !!state)
-          // Complete this Observable after successful login
-          .take(1)
-          // onLogoutObervable takes over once user is logged in.
-          // User will be redirected to login page whenever they log out.
-          .concat(af.auth
-                      // Keep this Observable alive for the duration of the app.
-                      .do((state: FirebaseAuthState) => {
-                        if (!state) {
-                          router.navigate(['./Login'])
-                        }
-                      }))
-          .subscribe();
-    }
+      mdIconRegistry:MdIconRegistry) {
+        // Add navigation icons
+        [['navigation', 'menu'], ['content', 'filter_list'], ['navigation', 'arrow_back']].forEach(([section,icon]) => {
+          mdIconRegistry.addSvgIcon(icon, `/vendor/material-design-icons/${section}/svg/production/ic_${icon}_24px.svg`)
+        });
 
+      /**
+       * Check login state and redirect to appropriate
+       * page: Login or Issues route.
+       */
+      if (!isPrerender) {
+        // If the page was part of the Firebase OAuth flow (the successful login redirect),
+        // then short-circuit the auth observable.
+        ArrayObservable.of(isPostLogin)
+            .filter(v => v === true)
+            .concat(af.auth)
+            // Cast nulls to booleans
+            .map(v => !!v)
+            .distinctUntilChanged()
+            .do((loggedIn: boolean) => {
+              // If state is null (user not logged in) navigate to log in
+              if (loggedIn && (!location.path() || location.path() === '/login')) {
+                gh.fetch(`/user/repos`, 'affiliation=owner,collaborator&sort=updated')
+                  .map((repos:Repo[]) => ({
+                    org: repos[0].owner.login,
+                    repo: repos[0].name
+                  }))
+                  .take(1)
+                  .subscribe(config => router.navigate(['./Issues', config]));
+              } else if (!isPostLogin) {
+                router.navigate(['./Login']);
+              }
+            })
+            // Only emit if user is logged in (state is non-null)
+            .filter(state => !!state)
+            // Complete this Observable after successful login
+            .take(1)
+            // onLogoutObervable takes over once user is logged in.
+            // User will be redirected to login page whenever they log out.
+            .concat(af.auth
+                        // Keep this Observable alive for the duration of the app.
+                        .do((state: FirebaseAuthState) => {
+                          if (!state) {
+                            router.navigate(['./Login'])
+                          }
+                        }))
+            .subscribe();
+      }
     }
 }
