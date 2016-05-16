@@ -19,6 +19,7 @@ module.exports = function(defaults) {
       'material-design-icons/navigation/svg/production/ic_menu_24px.svg',
       'material-design-icons/navigation/svg/production/ic_arrow_back_24px.svg',
       'material-design-icons/content/svg/production/ic_filter_list_24px.svg',
+      'material-design-icons/action/svg/production/ic_delete_24px.svg',
       '@ngrx/**/*.js'
     ]
   });

@@ -128,7 +128,7 @@ export class IssueZeroAppComponent {
       public gh:GithubService,
       mdIconRegistry:MdIconRegistry) {
         // Add navigation icons
-        [['navigation', 'menu'], ['content', 'filter_list'], ['navigation', 'arrow_back']].forEach(([section,icon]) => {
+        [['navigation', 'menu'], ['content', 'filter_list'], ['navigation', 'arrow_back'], ['action', 'delete']].forEach(([section,icon]) => {
           mdIconRegistry.addSvgIcon(icon, `/vendor/material-design-icons/${section}/svg/production/ic_${icon}_24px.svg`)
         });
 
