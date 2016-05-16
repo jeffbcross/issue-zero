@@ -11,7 +11,7 @@ const map: any = {
 };
 
 /** User packages configuration. */
-const packages: any = {
+var packages: any = {
   '@ngrx/db': {
     format: 'cjs',
     main: 'index.js',
@@ -29,40 +29,29 @@ const packages: any = {
   'angularfire2': {
     defaultExtension: 'js',
     main: 'angularfire2'
-  },
-  '@angular2-material/core': {
-    defaultExtension: 'js',
-    main: 'core'
-  },
-  '@angular2-material/icon': {
-    defaultExtension: 'js',
-    main: 'icon'
-  },
-  '@angular2-material/card': {
-    defaultExtension: 'js',
-    main: 'card'
-  },
-  '@angular2-material/toolbar': {
-    defaultExtension: 'js',
-    main: 'toolbar'
-  },
-  '@angular2-material/button': {
-    defaultExtension: 'js',
-    main: 'button'
-  },
-  '@angular2-material/list': {
-    defaultExtension: 'js',
-    main: 'list'
-  },
-  '@angular2-material/progress-circle': {
-    defaultExtension: 'js',
-    main: 'progress-circle'
-  },
-  '@angular2-material/sidenav': {
-    defaultExtension: 'js',
-    main: 'sidenav'
   }
 };
+
+// Add Angular Material packages
+packages = [
+  'button',
+  'card',
+  'checkbox',
+  'core',
+  'icon',
+  'input',
+  'list',
+  'progress-circle',
+  'sidenav',
+  'toolbar'
+].reduce((prev, main) => {
+  return Object.assign({}, prev, {
+    [`@angular2-material/${main}`]: {
+      defaultExtension: 'js',
+      main
+    }
+  })
+}, packages);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /***********************************************************************************************
