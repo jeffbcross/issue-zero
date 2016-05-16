@@ -6,7 +6,7 @@ const map: any = {
   '@angular2-material': 'vendor/@angular2-material',
   'angularfire2': 'vendor/angularfire2',
   'firebase': 'vendor/firebase/lib/firebase-web.js',
-  'hammerjs': 'vendor/hammerjs/hammer.js',
+  'hammerjs': 'vendor/hammerjs/hammer.min.js',
   '@ngrx': 'vendor/@ngrx'
 };
 
@@ -50,6 +50,10 @@ const packages: any = {
     defaultExtension: 'js',
     main: 'button'
   },
+  '@angular2-material/list': {
+    defaultExtension: 'js',
+    main: 'list'
+  },
   '@angular2-material/progress-circle': {
     defaultExtension: 'js',
     main: 'progress-circle'
@@ -90,6 +94,15 @@ const barrels: string[] = [
   'app',
   'app/shared',
   'app/+login',
+  'app/+issues',
+  'app/+issues/+list',
+  'app/+issues/+filter',
+  'app/+issues/+triage',
+  'app/+issues/+list/toolbar',
+  'app/+issues/+list/issue-row',
+  'app/+issues/+list/repo-selector-row',
+  'app/+repo-selector',
+  'app/+repo-selector/repo-selector-row',
   /** @cli-barrel */
 ];
 

@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { Injectable } from 'angular2/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { Issue, Repo, Label, User } from './shared/types';

@@ -8,7 +8,7 @@ import {LOCAL_STORAGE} from './config';
 export const LOCAL_STORAGE_KEY = 'FilterStore.filters';
 
 export interface FilterMap {
-  [key:string]: FilterStoreService;
+  [key:string]: Filter;
 }
 
 

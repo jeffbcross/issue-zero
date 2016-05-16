@@ -3,6 +3,8 @@ import {RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, Router} from '@angular
 import {Location} from '@angular/common';
 import {AngularFire, FirebaseAuthState} from 'angularfire2';
 import { LoginComponent } from './+login';
+import { IssuesComponent } from './+issues';
+import { RepoSelectorComponent } from './+repo-selector';
 
 import {MdButton} from '@angular2-material/button';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
@@ -112,7 +114,9 @@ md-toolbar md-progress-circle[mode="indeterminate"] /deep/ circle {
   providers: [MdIconRegistry]
 })
 @RouteConfig([
-  {path: '/login', name: 'Login', component: LoginComponent}
+  { path: '/login', name: 'Login', component: LoginComponent },
+  { path: '/issues/:org/:repo/...', name: 'Issues', component: IssuesComponent },
+  { path: '/repo-selector', name: 'RepoSelector', component: RepoSelectorComponent }
 ])
 export class IssueZeroAppComponent {
   constructor(
