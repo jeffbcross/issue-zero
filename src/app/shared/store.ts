@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { Issue, Repo, Label, User } from './types';
-import { FilterMap } from '../filter-store.service';
+import { FilterMap, Filter } from '../filter-store.service';
 
 export function issues (state: Issue[] = [], action:Action): Issue[] {
   switch (action.type) {
@@ -78,15 +78,26 @@ export function selectedRepository (state: Repo, action: Action): Repo {
 }
 
 export function filters(state: FilterMap = {}, action:Action): FilterMap {
+  var key;
+  if (action && action.payload && action.payload.org && action.payload.repo) {
+    key = `${action.payload.org}/${action.payload.repo}`;
+  }
+  console.log('action', action);
   switch(action.type) {
+    case 'CreateFilterIfNotExist':
+      if (!state[key]) {
+        state = Object.assign({}, state, {
+          [key]: new Filter(key)
+        });
+      }
+      break;
     case 'SetFilter':
       state = Object.assign({}, state, {
-        [`${action.payload.org}/${action.payload.repo}`]: action.payload
+        [key]: action.payload
       });
       break;
 
     case 'UpdateFilterCriteria':
-      let key = `${action.payload.org}/${action.payload.repo}`;
       state = Object.assign({}, state, {
         [key]: Object.assign({}, state[key], {
           criteria: state[key].criteria.map((c, i: number) => {
@@ -95,6 +106,22 @@ export function filters(state: FilterMap = {}, action:Action): FilterMap {
         })
       })
       console.log('UpdateFilterCriteria', state);
+      break;
+    case 'RemoveFilterCriteria':
+      state = Object.assign({}, state, {
+        [key]: Object.assign({}, state[key], {
+          criteria: state[key].criteria.filter((c, i: number) => {
+            return i !== action.payload.index;
+          })
+        })
+      })
+      console.log('UpdateFilterCriteria', state);
+      break;
+    case 'AddFilterCriteria':
+      let newCriteria = state[key].criteria.concat(action.payload.criteria)
+      state = Object.assign({}, state, {
+        [key]: Object.assign({}, state[key], {criteria: newCriteria})
+      });
       break;
   }
   return state;

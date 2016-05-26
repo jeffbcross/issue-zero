@@ -127,19 +127,12 @@ const injector = ReflectiveInjector.resolveAndCreate([
 var db = injector.get(Database);
 
 db.query('appState')
-  .do((state: AppState) => {
-    console.log('got appState');
-    // store.dispatch({
-    //   type: ActionTypes.INIT,
-    //   payload: state
-    // })
-  })
   .do((state) => {
     console.log('state', state);
   }, () => {
     console.error('state error');
   }, () => {
-    console.log('no query data');
+    console.log('data complete');
   })
   .subscribe((state: AppState) => {
     bootstrap(IssueZeroAppComponent, [
@@ -159,7 +152,7 @@ db.query('appState')
       StoreAutoCache
     ]).then(c => {
       // Force instantiation of StoreAutoCache
-      // c.injector.get(StoreAutoCache);
+      c.injector.get(StoreAutoCache);
     });
 
   });

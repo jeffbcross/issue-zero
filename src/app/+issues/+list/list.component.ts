@@ -10,7 +10,6 @@ import {IssueRowComponent} from './issue-row/issue-row.component';
 import { AppState, Issue, Repo } from '../../shared';
 import {GithubService} from '../../github.service';
 import {
-  FilterStoreService,
   Filter,
   FilterObject,
   FilterMap,
@@ -41,7 +40,7 @@ import {NotPendingRemoval} from './not-pending-removal.pipe';
       </issue-row>
     </md-list>
   `,
-  providers: [GithubService, FilterStoreService, RepoParamsService],
+  providers: [GithubService, RepoParamsService],
   directives: [MD_LIST_DIRECTIVES, ToolbarComponent, IssueRowComponent, ROUTER_DIRECTIVES],
   pipes: [NotPendingRemoval],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -52,7 +51,7 @@ export class ListComponent implements OnInit {
   repoSelection: Observable<Repo>;
   addIssueSubscription: Subscription;
   constructor(
-      private gh: GithubService, private filterStore: FilterStoreService,
+      private gh: GithubService,
       private store: Store<AppState>, private repoParams: RepoParamsService,
       private router: Router) {}
 
@@ -80,13 +79,12 @@ export class ListComponent implements OnInit {
         this.store.select('filters')
             .map((filters: FilterMap) => filters && filters[`${org}/${repo}`])
             .filter((filter: Filter) => !!filter)
-            .flatMap((filter: Filter) => filter.changes)
             .map((filter: FilterObject) => generateQuery(filter))
             .switchMap((query: string) => this.gh.getIssues(query))
             .subscribe(
                 (issues: Issue[]) => {this.store.dispatch({type: 'AddIssues', payload: issues});});
 
-    this.store.dispatch({type: 'SetFilter', payload: this.filterStore.getFilter(`${org}/${repo}`)});
+    // this.store.dispatch({type: 'SetFilter', payload: this.filterStore.getFilter(`${org}/${repo}`)});
 
     this.issues = this.store.select('issues')
                       .filter((i: Issue[]) => !!i)

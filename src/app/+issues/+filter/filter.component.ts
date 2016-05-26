@@ -8,12 +8,12 @@ import {Observable} from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
 import {
-  FilterStoreService,
   Filter as ServiceFilter,
   UnlabeledCriteria,
   LabelCriteria,
   Criteria,
-  FilterCriteriaUpdate
+  FilterCriteriaUpdate,
+  FilterMap
 } from '../../filter-store.service';
 import {GithubService} from '../../github.service';
 import {RepoParamsService} from '../../repo-params.service';
@@ -30,7 +30,7 @@ import { AppState } from '../../shared';
       Untriaged Issue Filter
     </md-toolbar>
     <md-form>
-      <md-card *ngFor="let criteria of (filter.changes | async)?.criteria; #criteriaIndex = index">
+      <md-card *ngFor="let criteria of (filter | async)?.criteria; let criteriaIndex = index">
         <h3>{{criteria.name}}</h3>
         <div [ngSwitch]="criteria.type">
           <div *ngSwitchWhen="'hasLabel'">
@@ -47,7 +47,7 @@ import { AppState } from '../../shared';
           </div>
         </div>
 
-        <button md-icon-button (click)="filter.removeCriteria(criteriaIndex)">
+        <button md-icon-button (click)="removeCriteria(criteriaIndex)">
           <md-icon svgIcon="delete">
             delete
           </md-icon> Remove
@@ -72,17 +72,16 @@ import { AppState } from '../../shared';
     }
   `],
   directives: [MdIcon, MdToolbar, MD_CARD_DIRECTIVES, ROUTER_DIRECTIVES, MdAnchor, MdButton],
-  providers: [FilterStoreService, GithubService, RepoParamsService]
+  providers: [GithubService, RepoParamsService]
 })
 export class FilterComponent {
-  filter: ServiceFilter;
+  filter: Observable<ServiceFilter>;
   labels: any[];
   org: string;
   repo: string;
   repoFull: string;
   availableCriteria: any[] = [LabelCriteria, UnlabeledCriteria];
   constructor(
-    public filterStore: FilterStoreService,
     public gh: GithubService,
     private repoParams: RepoParamsService,
     private _store: Store<AppState>) {
@@ -90,7 +89,14 @@ export class FilterComponent {
     this.org = org;
     this.repo = repo;
     this.repoFull = `${this.org}/${this.repo}`;
-    this.filter = this.filterStore.getFilter(this.repoFull);
+    this.filter = this._store.select('filters').map((f:FilterMap) => f[this.repoFull]);
+    this._store.dispatch({
+      type: 'CreateFilterIfNotExist',
+      payload: {
+        org: this.org,
+        repo: this.repo
+      }
+    })
     gh.fetchLabels(this.repoFull)
       .take(1)
       .subscribe(labels => this.labels = labels);
@@ -118,10 +124,27 @@ export class FilterComponent {
     this._store.dispatch(storeAction);
   }
 
-  onChange(evt) {
-    this.filter.addCriteria(this.availableCriteria
-      .filter((c: Criteria) => c.name === evt.target.value)[0]);
+  removeCriteria(index: number) {
+    this._store.dispatch({
+      type: 'RemoveFilterCriteria',
+      payload: {
+        org: this.org,
+        repo: this.repo,
+        index
+      }
+    })
+  }
 
+  onChange(evt) {
+    this._store.dispatch({
+      type: 'AddFilterCriteria',
+      payload: {
+        org: this.org,
+        repo: this.repo,
+        criteria: this.availableCriteria
+      .filter((c: Criteria) => c.name === evt.target.value)
+      }
+    })
   }
 
   labelTrack(label: any): string {

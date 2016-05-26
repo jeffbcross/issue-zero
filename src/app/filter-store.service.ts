@@ -12,22 +12,6 @@ export interface FilterMap {
   [key:string]: Filter;
 }
 
-
-@Injectable()
-export class FilterStoreService {
-private _filters = new Map<string, Filter>();
-  constructor(@Inject(LOCAL_STORAGE) private localStorage:any, private _store: Store<AppState>) {}
-
-  getFilter (repository:string): Observable<Filter> {
-    return this._store
-      .select('filters')
-      .map((filters: FilterMap) => {
-        return filters[repository] || new Filter(repository);
-      })
-    }
-  }
-}
-
 export class Filter {
   org: string;
   repo: string;
@@ -37,45 +21,6 @@ export class Filter {
     var split = repo.split('/');
     this.org = split[0];
     this.repo = split[1];
-  }
-
-  addCriteria(c:Criteria): void {
-    // var initialValue = this.changes.value;
-    // var newValue = {
-    //   repo: initialValue.repo,
-    //   criteria: initialValue.criteria.concat([c])
-    // };
-    // switch(c.type) {
-    //   case 'unlabeled':
-    //     newValue.criteria = removeHasLabelCriteria(newValue.criteria);
-    //     break;
-    //   case 'hasLabel':
-    //     newValue.criteria = removeNoLabelIfHasLabel(newValue.criteria);
-    //     break;
-    // }
-    // this._cacheAndEmit(newValue);
-  }
-
-  removeCriteria(index:number): void {
-    // var initialValue = this.changes.value;
-    // var newValue = {
-    //   repo: initialValue.repo,
-    //   criteria: initialValue.criteria.reduce((prev:Criteria[], curr:Criteria, i) => {
-    //       if (i === index) return prev;
-    //       return prev.concat([curr]);
-    //     }, [])
-    // };
-    // this._cacheAndEmit(newValue);
-  }
-
-  _cacheAndEmit(newValue:FilterObject): void {
-    // updateCache(newValue.repo, newValue, this.localStorage);
-    // this.changes.next(newValue);
-  }
-
-  static fromJson (storage:any, json:FilterObject):Filter {
-    // return new Filter(storage, json.repo, json.criteria);
-    return;
   }
 }
 
@@ -110,6 +55,7 @@ export function removeHasLabelCriteria(criteria: Criteria[]): Criteria[] {
 }
 
 export function generateQuery (filter:FilterObject): string {
+  console.log('filterObject', filter);
   var generated = `${filter.criteria
     .map(c => {
       var interpolated = c.query;
