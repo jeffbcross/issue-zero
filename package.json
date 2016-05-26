@@ -32,6 +32,7 @@
     "@angular2-material/progress-circle": "^2.0.0-alpha.4",
     "@angular2-material/sidenav": "^2.0.0-alpha.4",
     "@angular2-material/toolbar": "^2.0.0-alpha.4",
+    "@ngrx/db": "^1.1.0",
     "@ngrx/store": "^1.5.0",
     "angular-cli": "^1.0.0-beta.4",
     "angularfire2": "^2.0.0-beta.0",

@@ -67,6 +67,16 @@ export function labels(state: Label[] = [], action:Action): Label[] {
   return state;
 }
 
+export function selectedRepository (state: Repo, action: Action): Repo {
+  switch (action.type) {
+    case 'RepositorySelected':
+      console.log('repository selected!', action.payload);
+      state = action.payload;
+      break;
+  }
+  return state;
+}
+
 export function filters(state: FilterMap = {}, action:Action): FilterMap {
   switch(action.type) {
     case 'SetFilter':
@@ -84,4 +94,5 @@ export interface AppState {
   users: User[];
   repos: Repo[];
   filters: FilterMap;
+  selectedRepository: Repo;
 }

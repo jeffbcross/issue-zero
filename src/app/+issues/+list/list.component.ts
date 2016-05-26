@@ -62,6 +62,7 @@ export class ListComponent implements OnInit {
     /**
      * Get full repo object based on route params.
      */
+    this.store.select('selectedRepository').subscribe(r => console.log('repo loaded from store', r))
     this.repoSelection = this.store.select('repos')
                              .filter((r: Repo) => !!r)
                              .map((repos: Repo[]) => repos.filter((repository: Repo) => {

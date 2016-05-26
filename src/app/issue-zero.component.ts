@@ -127,7 +127,8 @@ export class IssueZeroAppComponent {
       @Inject(IS_POST_LOGIN) isPostLogin:boolean,
       location:Location,
       public gh:GithubService,
-      mdIconRegistry:MdIconRegistry) {
+      mdIconRegistry:MdIconRegistry
+      ) {
         // Add navigation icons
         [['navigation', 'menu'], ['content', 'filter_list'], ['navigation', 'arrow_back'], ['action', 'delete']].forEach(([section,icon]) => {
           mdIconRegistry.addSvgIcon(icon, `/vendor/material-design-icons/${section}/svg/production/ic_${icon}_24px.svg`)

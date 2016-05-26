@@ -9,7 +9,8 @@ import {Observable} from 'rxjs/Observable';
 
 import {RepoSelectorRowComponent} from './repo-selector-row/repo-selector-row.component';
 import {GithubService} from '../github.service';
-import {Repo} from '../shared';
+import { AppState, Repo } from '../shared';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'repo-selector',
@@ -26,6 +27,7 @@ import {Repo} from '../shared';
       <repo-selector-row
         [repo]="repo"
         *ngFor="let repo of repos | async"
+        (click)="dispatchSelected(repo)"
         [routerLink]="['/Issues', {org: repo.owner.login, repo: repo.name}]">
       </repo-selector-row>
     </md-list>
@@ -47,9 +49,16 @@ import {Repo} from '../shared';
 })
 export class RepoSelectorComponent implements OnInit {
   repos:Observable<Repo[]>;
-  constructor(private gh:GithubService, private routeParams:RouteParams) {}
+  constructor(private gh:GithubService, private routeParams:RouteParams, private store: Store<AppState>) {}
 
   ngOnInit() {
     this.repos = this.gh.fetch(`/user/repos`, 'affiliation=owner,collaborator&sort=updated');
+  }
+
+  dispatchSelected(payload: Repo): void {
+    this.store.dispatch({
+      type: 'RepositorySelected',
+      payload
+    });
   }
 }
