@@ -5,16 +5,19 @@ import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 import {MdIcon} from '@angular2-material/icon';
 import { MdAnchor, MdButton } from '@angular2-material/button';
 import {Observable} from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
 
 import {
   FilterStoreService,
   Filter as ServiceFilter,
   UnlabeledCriteria,
   LabelCriteria,
-  Criteria
+  Criteria,
+  FilterCriteriaUpdate
 } from '../../filter-store.service';
 import {GithubService} from '../../github.service';
 import {RepoParamsService} from '../../repo-params.service';
+import { AppState } from '../../shared';
 
 @Component({
   template: `
@@ -81,7 +84,8 @@ export class FilterComponent {
   constructor(
     public filterStore: FilterStoreService,
     public gh: GithubService,
-    private repoParams: RepoParamsService) {
+    private repoParams: RepoParamsService,
+    private _store: Store<AppState>) {
     var {org, repo} = repoParams.getRepo();
     this.org = org;
     this.repo = repo;
@@ -97,12 +101,21 @@ export class FilterComponent {
   }
 
   updateLabelCriteria(idx: number, evt: any) {
-    this.filter.updateCriteria(idx, {
-      type: 'hasLabel',
-      name: 'Has label',
-      label: evt.target.value,
-      query: 'label:%s'
-    });
+    var storeAction: FilterCriteriaUpdate = {
+      type: 'UpdateFilterCriteria',
+      payload: {
+        repo: this.repo,
+        org: this.org,
+        index: idx,
+        newCriteria: {
+          type: 'hasLabel',
+          name: 'Has label',
+          label: evt.target.value,
+          query: 'label:%s'
+        }
+      }
+    }
+    this._store.dispatch(storeAction);
   }
 
   onChange(evt) {

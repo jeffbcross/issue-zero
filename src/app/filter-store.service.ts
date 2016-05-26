@@ -2,8 +2,9 @@ import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Operator} from 'rxjs/Operator';
+import { Store } from '@ngrx/store';
 
-import {LOCAL_STORAGE} from './shared';
+import { AppState, LOCAL_STORAGE } from './shared';
 
 export const LOCAL_STORAGE_KEY = 'FilterStore.filters';
 
@@ -15,98 +16,66 @@ export interface FilterMap {
 @Injectable()
 export class FilterStoreService {
 private _filters = new Map<string, Filter>();
-  constructor(@Inject(LOCAL_STORAGE) private localStorage:any) {}
+  constructor(@Inject(LOCAL_STORAGE) private localStorage:any, private _store: Store<AppState>) {}
 
-  getFilter (repository:string): Filter {
-    var filter = this._filters.get(repository);
-    if (filter) {
-      return filter;
-    } else {
-      var newFilter = retrieveFromCache(repository, this.localStorage);
-      if (!newFilter) {
-        newFilter = new Filter(this.localStorage, repository);
-        updateCache(repository, newFilter.changes.value, this.localStorage);
-      }
-      this._filters.set(repository, newFilter);
-      return newFilter;
+  getFilter (repository:string): Observable<Filter> {
+    return this._store
+      .select('filters')
+      .map((filters: FilterMap) => {
+        return filters[repository] || new Filter(repository);
+      })
     }
   }
-}
-
-export function updateCache(repo:string, filter:FilterObject, storage:any): void {
-  storage.setItem(`${LOCAL_STORAGE_KEY}:${repo}`, JSON.stringify(filter));
-}
-
-export function retrieveFromCache(repo:string, storage:any): Filter {
-  var filterCached = storage.getItem(`${LOCAL_STORAGE_KEY}:${repo}`);
-  return filterCached ? Filter.fromJson(storage, JSON.parse(filterCached)) : null;
 }
 
 export class Filter {
   org: string;
   repo: string;
-  changes: BehaviorSubject<FilterObject>;
-  constructor(private localStorage:any, repo?:string, criteria: Criteria[] = [UnlabeledCriteria]) {
+  constructor(
+    repo?:string,
+    public criteria: Criteria[] = [UnlabeledCriteria]) {
     var split = repo.split('/');
     this.org = split[0];
     this.repo = split[1];
-    this.changes = new BehaviorSubject({
-      repo,
-      criteria
-    });
-  }
-
-  updateCriteria(index:number, newCriteria:Criteria | LabelCriteria): void {
-    var initialValue = this.changes.value;
-    var newValue = {
-      repo: initialValue.repo,
-      criteria: initialValue.criteria.map((oldCriteria:Criteria, i:number) => {
-        return i === index ? newCriteria : oldCriteria;
-      })
-    };
-    this._cacheAndEmit(newValue);
   }
 
   addCriteria(c:Criteria): void {
-    var initialValue = this.changes.value;
-    var newValue = {
-      repo: initialValue.repo,
-      criteria: initialValue.criteria.concat([c])
-    };
-    switch(c.type) {
-      case 'unlabeled':
-        newValue.criteria = removeHasLabelCriteria(newValue.criteria);
-        break;
-      case 'hasLabel':
-        newValue.criteria = removeNoLabelIfHasLabel(newValue.criteria);
-        break;
-    }
-    this._cacheAndEmit(newValue);
+    // var initialValue = this.changes.value;
+    // var newValue = {
+    //   repo: initialValue.repo,
+    //   criteria: initialValue.criteria.concat([c])
+    // };
+    // switch(c.type) {
+    //   case 'unlabeled':
+    //     newValue.criteria = removeHasLabelCriteria(newValue.criteria);
+    //     break;
+    //   case 'hasLabel':
+    //     newValue.criteria = removeNoLabelIfHasLabel(newValue.criteria);
+    //     break;
+    // }
+    // this._cacheAndEmit(newValue);
   }
 
   removeCriteria(index:number): void {
-    var initialValue = this.changes.value;
-    var newValue = {
-      repo: initialValue.repo,
-      criteria: initialValue.criteria.reduce((prev:Criteria[], curr:Criteria, i) => {
-          if (i === index) return prev;
-          return prev.concat([curr]);
-        }, [])
-    };
-    this._cacheAndEmit(newValue);
+    // var initialValue = this.changes.value;
+    // var newValue = {
+    //   repo: initialValue.repo,
+    //   criteria: initialValue.criteria.reduce((prev:Criteria[], curr:Criteria, i) => {
+    //       if (i === index) return prev;
+    //       return prev.concat([curr]);
+    //     }, [])
+    // };
+    // this._cacheAndEmit(newValue);
   }
 
   _cacheAndEmit(newValue:FilterObject): void {
-    updateCache(newValue.repo, newValue, this.localStorage);
-    this.changes.next(newValue);
-  }
-
-  setStorage(localStorage: any): void {
-    this.localStorage = localStorage;
+    // updateCache(newValue.repo, newValue, this.localStorage);
+    // this.changes.next(newValue);
   }
 
   static fromJson (storage:any, json:FilterObject):Filter {
-    return new Filter(storage, json.repo, json.criteria);
+    // return new Filter(storage, json.repo, json.criteria);
+    return;
   }
 }
 
@@ -187,4 +156,14 @@ export const LabelCriteria = {
   type: 'hasLabel',
   name: 'Has label',
   query: 'label:%s'
+}
+
+export interface FilterCriteriaUpdate {
+  type: 'UpdateFilterCriteria';
+  payload: {
+    repo: string;
+    org: string;
+    index: number;
+    newCriteria: Criteria | LabelCriteria
+  };
 }

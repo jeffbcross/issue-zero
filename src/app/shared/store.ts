@@ -84,6 +84,18 @@ export function filters(state: FilterMap = {}, action:Action): FilterMap {
         [`${action.payload.org}/${action.payload.repo}`]: action.payload
       });
       break;
+
+    case 'UpdateFilterCriteria':
+      let key = `${action.payload.org}/${action.payload.repo}`;
+      state = Object.assign({}, state, {
+        [key]: Object.assign({}, state[key], {
+          criteria: state[key].criteria.map((c, i: number) => {
+            return i === action.payload.index ? action.payload.newCriteria : c;
+          })
+        })
+      })
+      console.log('UpdateFilterCriteria', state);
+      break;
   }
   return state;
 }
