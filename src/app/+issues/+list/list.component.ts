@@ -9,6 +9,9 @@ import {ToolbarComponent} from './toolbar/toolbar.component';
 import {IssueRowComponent} from './issue-row/issue-row.component';
 import {
   AppState,
+  GITHUB_STORE_ACTION_TYPES,
+  GithubDataNeededAction,
+  GithubDataNeededState,
   Issue,
   Repo,
   SELECTED_REPOSITORY_STORE_NAME,
@@ -74,7 +77,7 @@ export class ListComponent implements OnInit {
        * in the route, let's populate the store.
        * TODO: centralize the management of this.
        */
-      .do((r: Repo) => {
+      .do((r: {org: string, repo: string}) => {
         console.log('r?', r);
         if (!r) this.store.dispatch({
             type: SELECTED_REPOSITORY_ACTION_TYPES.Selected,
@@ -84,8 +87,22 @@ export class ListComponent implements OnInit {
       /**
        * Now get the repository information from the store.
        */
-      .switchMap((r: Repo) => this.store.select('repos')
-          .filter((r: Repo) => !!r)
+      .switchMap(({org, repo}: {org?: string, repo?: string} = {}) => this.store.select('repos')
+          .do((repos: Repo[]) => {
+            // If no repos match the active filter
+            if (!repos.length || !repos.filter((repository: Repo) => repository.name === repo && repository.owner.login === org).length) {
+              var action: GithubDataNeededAction = {
+                type: GITHUB_STORE_ACTION_TYPES.GetRepo,
+                payload: {
+                  org,
+                  repo,
+                  method: 'getRepo'
+                }
+              };
+              this.store.dispatch(action)
+            }
+          })
+          .filter((r: Repo[]) => !!r)
           .map((repos: Repo[]) => repos.filter((repository: Repo) => {
             return repository.name === repo && repository.owner.login === org;
           })[0]));

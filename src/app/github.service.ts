@@ -6,7 +6,10 @@ import {Observable} from 'rxjs/Observable';
 import {ScalarObservable} from 'rxjs/observable/ScalarObservable';
 import {ErrorObservable} from 'rxjs/observable/ErrorObservable';
 
-import { AppState,
+import {
+  AppState,
+  GithubDataNeededState,
+  GITHUB_STORE_NAME,
   Issue,
   Label,
   LOCAL_STORAGE,
@@ -29,14 +32,31 @@ export class GithubService {
     @Inject(LOCAL_STORAGE) private _localStorage: LocalStorage,
     private _af: AngularFire,
     store: Store<AppState>) {
-      console.log('github service created');
-      store.select(SELECTED_REPOSITORY_STORE_NAME)
-        .filter(r => !!r)
-        .switchMap(({repo, org}: {repo: string, org: string}) =>
-          this.getRepo(`${org}/${repo}`))
-        .subscribe((_repo: Repo) => store.dispatch({
-          type: 'AddRepo', payload: _repo
-        }));
+      store.select(GITHUB_STORE_NAME)
+        .mergeMap((s: GithubDataNeededState) => {
+          var request;
+          switch (s.method) {
+            case 'getRepo':
+              request = this.getRepo(`${s.org}/${s.repo}`)
+                .do((r: Repo) => {
+                  console.log('repo loaded, dispatching now');
+                  store.dispatch({
+                    type: 'AddRepo',
+                    payload: r
+                  })
+                })
+              break;
+          }
+          return request;
+        });
+      // console.log('github service created');
+      // store.select(SELECTED_REPOSITORY_STORE_NAME)
+      //   .filter(r => !!r)
+      //   .switchMap(({repo, org}: {repo: string, org: string}) =>
+      //     this.getRepo(`${org}/${repo}`))
+      //   .subscribe((_repo: Repo) => store.dispatch({
+      //     type: 'AddRepo', payload: _repo
+      //   }));
   }
 
   // TODO(jeffbcross): don't use error paths here

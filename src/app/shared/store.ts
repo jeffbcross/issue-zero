@@ -133,6 +133,38 @@ export function filters(state: FilterMap = {}, action:Action): FilterMap {
   return state;
 }
 
+export const GITHUB_STORE_ACTION_TYPES = {
+  CloseIssue: 'CloseIssue',
+  GetIssues: 'GetIssues',
+  GetIssue: 'GetIssue',
+  GetRepo: 'GetRepo',
+  AddComment: 'AddComment',
+  PatchIssue: 'PatchIssue',
+  FetchLabels: 'FetchLabels'
+};
+
+export const GITHUB_STORE_NAME = 'github';
+
+export function github (state: GithubDataNeededState, action: GithubDataNeededAction) {
+  // This store just replaces the state with the new payload each time.
+  return action.payload;
+}
+
+export interface GithubDataNeededAction extends Action {
+  payload: GithubDataNeededState
+}
+
+export interface GithubDataNeededState {
+  method: 'closeIssue' | 'getIssues' | 'getIssue' | 'getRepo' | 'addComment' | 'patchIssue' | 'fetchLabels';
+  org: string;
+  repo: string; // just the repository, not including owner
+  issueNumber?: number; // Just for issue-related requests
+  patch?: Object;
+  comment?: string;
+  issue?: Issue;
+  query?: string; // query to be intepolated into issue search
+}
+
 export interface AppState {
   issues: Issue[];
   labels: Label[];
