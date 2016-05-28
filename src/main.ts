@@ -9,8 +9,10 @@ import { ROUTER_PROVIDERS } from '@angular/router-deprecated';
 import { GithubService } from './app/github.service';
 import { ActionTypes, provideStore, Store } from '@ngrx/store';
 import { Database, DBSchema, provideDB } from '@ngrx/db';
+import { Observable } from 'rxjs/Observable';
 
 // Import auto-patching RxJS operators
+import 'rxjs/add/observable/empty';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/take';
@@ -37,7 +39,8 @@ import {
   LOCAL_STORAGE,
   repos,
   users,
-  selectedRepository
+  selectedRepository,
+  SELECTED_REPOSITORY_STORE_NAME
 } from './app/shared';
 
 if (environment.production) {
@@ -58,7 +61,7 @@ const issueZeroAppSchema: DBSchema = {
   name: 'issue_zero_app',
   stores: {
     'appState': {primaryKey: 'id'},
-    'selectedRepository': {autoIncrement: true}
+    [SELECTED_REPOSITORY_STORE_NAME]: {autoIncrement: true}
   }
 };
 
@@ -125,34 +128,38 @@ const injector = ReflectiveInjector.resolveAndCreate([
 ]);
 
 var db = injector.get(Database);
+var providers = [
+  APP_SHELL_RUNTIME_PROVIDERS, FIREBASE_PROVIDERS, ROUTER_PROVIDERS, HTTP_PROVIDERS,
+  defaultFirebase(FB_URL),
+  provide(IS_POST_LOGIN, {
+    useValue: (<any>window).__IS_POST_LOGIN
+  }),
+  GithubService,
+  provideDB(issueZeroAppSchema),
+  provide(LOCAL_STORAGE, {
+    useValue: (<any>window.localStorage)
+  }),
+  firebaseAuthConfig(
+      {provider: AuthProviders.Github, method: AuthMethods.Redirect, scope: ['repo']}),
+  StoreAutoCache
+];
+
+
 
 db.query('appState')
-  .do((state) => {
-    console.log('state', state);
-  }, () => {
-    console.error('state error');
-  }, () => {
-    console.log('data complete');
-  })
+  /**
+   * Force onNext to be called, even if db.query completes
+   * before any value has been emitted.
+   **/
+  .concat(Observable.of(null))
+  .take(1)
   .subscribe((state: AppState) => {
-    bootstrap(IssueZeroAppComponent, [
-      APP_SHELL_RUNTIME_PROVIDERS, FIREBASE_PROVIDERS, ROUTER_PROVIDERS, HTTP_PROVIDERS,
-      defaultFirebase(FB_URL),
-      provide(IS_POST_LOGIN, {
-        useValue: (<any>window).__IS_POST_LOGIN
-      }),
-      GithubService,
-      provideDB(issueZeroAppSchema),
-      provideStore({repos, issues, labels, users, filters, selectedRepository}, state),
-      provide(LOCAL_STORAGE, {
-        useValue: (<any>window.localStorage)
-      }),
-      firebaseAuthConfig(
-          {provider: AuthProviders.Github, method: AuthMethods.Redirect, scope: ['repo']}),
-      StoreAutoCache
-    ]).then(c => {
+    var args: any[] = [{repos, issues, labels, users, filters, selectedRepository}];
+    if (state) args = args.concat([state]);
+    bootstrap(IssueZeroAppComponent, providers.concat([
+      provideStore.apply(null, args)
+    ])).then(c => {
       // Force instantiation of StoreAutoCache
-      c.injector.get(StoreAutoCache);
+      // c.injector.get(StoreAutoCache);
     });
-
   });

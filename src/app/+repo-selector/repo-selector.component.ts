@@ -9,7 +9,7 @@ import {Observable} from 'rxjs/Observable';
 
 import {RepoSelectorRowComponent} from './repo-selector-row/repo-selector-row.component';
 import {GithubService} from '../github.service';
-import { AppState, Repo } from '../shared';
+import { AppState, Repo, SELECTED_REPOSITORY_ACTION_TYPES } from '../shared';
 import { Store } from '@ngrx/store';
 
 @Component({
@@ -57,7 +57,7 @@ export class RepoSelectorComponent implements OnInit {
 
   dispatchSelected(payload: Repo): void {
     this.store.dispatch({
-      type: 'RepositorySelected',
+      type: SELECTED_REPOSITORY_ACTION_TYPES.Selected,
       payload
     });
   }

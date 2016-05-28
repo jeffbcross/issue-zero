@@ -1,14 +1,19 @@
 import { Injectable, Inject } from '@angular/core';
 import {Http} from '@angular/http';
-
+import { Store } from '@ngrx/store';
 import {AngularFire, FirebaseAuthState} from 'angularfire2';
-
-
 import {Observable} from 'rxjs/Observable';
 import {ScalarObservable} from 'rxjs/observable/ScalarObservable';
 import {ErrorObservable} from 'rxjs/observable/ErrorObservable';
 
-import {Issue, Label, LOCAL_STORAGE, Repo, User} from './shared';
+import { AppState,
+  Issue,
+  Label,
+  LOCAL_STORAGE,
+  Repo,
+  SELECTED_REPOSITORY_STORE_NAME,
+  User
+} from './shared';
 
 const GITHUB_API = 'https://api.github.com';
 
@@ -20,10 +25,19 @@ interface LocalStorage {
 @Injectable()
 export class GithubService {
   constructor(
-    private _http:Http,
-    @Inject(LOCAL_STORAGE) private _localStorage:LocalStorage,
-    private _af:AngularFire
-    ) {}
+    private _http: Http,
+    @Inject(LOCAL_STORAGE) private _localStorage: LocalStorage,
+    private _af: AngularFire,
+    store: Store<AppState>) {
+      console.log('github service created');
+      store.select(SELECTED_REPOSITORY_STORE_NAME)
+        .filter(r => !!r)
+        .switchMap(({repo, org}: {repo: string, org: string}) =>
+          this.getRepo(`${org}/${repo}`))
+        .subscribe((_repo: Repo) => store.dispatch({
+          type: 'AddRepo', payload: _repo
+        }));
+  }
 
   // TODO(jeffbcross): don't use error paths here
   fetch(path:string, params?: string): any {//Observable<Repo[]> {

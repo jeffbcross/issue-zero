@@ -73,13 +73,14 @@ export function generateQuery (filter:FilterObject): string {
       // Unescape quotes
       return interpolated.replace(/%22/g, '"');
     })
-    .join('+')}+repo:${filter.repo}+state:open`
+    .join('+')}+repo:${filter.org}/${filter.repo}+state:open`
   return generated;
 }
 
 export interface FilterObject {
   criteria: Criteria[];
   repo: string;
+  org: string;
 }
 
 export interface Criteria {

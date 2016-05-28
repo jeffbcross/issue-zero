@@ -2,9 +2,6 @@ import {Component, Inject} from '@angular/core';
 import {RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, Router} from '@angular/router-deprecated';
 import {Location} from '@angular/common';
 import {AngularFire, FirebaseAuthState} from 'angularfire2';
-import { LoginComponent } from './+login';
-import { IssuesComponent } from './+issues';
-import { RepoSelectorComponent } from './+repo-selector';
 
 import {MdButton} from '@angular2-material/button';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
@@ -14,12 +11,16 @@ import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav';
 import {MdToolbar} from '@angular2-material/toolbar';
 import {Observable} from 'rxjs/Observable';
 import {ArrayObservable} from 'rxjs/observable/ArrayObservable';
-// import {Issues} from './issues/issues';
-import {GithubService} from './github.service';
-// import {RepoSelectorComponent} from './+repo-selector/index';
-import { APP_SHELL_DIRECTIVES, IS_PRERENDER } from '@angular/app-shell';
-import { IS_POST_LOGIN, Repo } from './shared';
+import { Store } from '@ngrx/store';
 import { MdIconRegistry } from '@angular2-material/icon';
+import { APP_SHELL_DIRECTIVES, IS_PRERENDER } from '@angular/app-shell';
+
+import {GithubService} from './github.service';
+import { AppState, IS_POST_LOGIN, Repo, SELECTED_REPOSITORY_ACTION_TYPES } from './shared';
+import { LoginComponent } from './+login';
+import { IssuesComponent } from './+issues';
+import { RepoSelectorComponent } from './+repo-selector';
+
 
 @Component({
   moduleId: module.id,
@@ -127,7 +128,8 @@ export class IssueZeroAppComponent {
       @Inject(IS_POST_LOGIN) isPostLogin:boolean,
       location:Location,
       public gh:GithubService,
-      mdIconRegistry:MdIconRegistry
+      mdIconRegistry:MdIconRegistry,
+      private _store: Store<AppState>
       ) {
         // Add navigation icons
         [['navigation', 'menu'], ['content', 'filter_list'], ['navigation', 'arrow_back'], ['action', 'delete']].forEach(([section,icon]) => {
@@ -151,6 +153,13 @@ export class IssueZeroAppComponent {
               // If state is null (user not logged in) navigate to log in
               if (loggedIn && (!location.path() || location.path() === '/login')) {
                 gh.fetch(`/user/repos`, 'affiliation=owner,collaborator&sort=updated')
+                  .do(([payload]: Repo[]) => {
+                    console.log('dispatching')
+                    this._store.dispatch({
+                      type: SELECTED_REPOSITORY_ACTION_TYPES.Selected,
+                      payload
+                    })
+                  })
                   .map((repos:Repo[]) => ({
                     org: repos[0].owner.login,
                     repo: repos[0].name

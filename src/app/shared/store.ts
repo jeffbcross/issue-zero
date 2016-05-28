@@ -67,9 +67,15 @@ export function labels(state: Label[] = [], action:Action): Label[] {
   return state;
 }
 
+export const SELECTED_REPOSITORY_ACTION_TYPES = {
+  Selected: 'SelectedRepositoryChanged'
+};
+
+export const SELECTED_REPOSITORY_STORE_NAME = 'selectedRepository';
+
 export function selectedRepository (state: Repo, action: Action): Repo {
   switch (action.type) {
-    case 'RepositorySelected':
+    case SELECTED_REPOSITORY_ACTION_TYPES.Selected:
       console.log('repository selected!', action.payload);
       state = action.payload;
       break;

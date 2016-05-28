@@ -11,6 +11,7 @@ import { APP_SHELL_BUILD_PROVIDERS } from '@angular/app-shell';
 import { AngularFire, FIREBASE_PROVIDERS, defaultFirebase } from 'angularfire2';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/empty';
+import { provideStore } from '@ngrx/store';
 
 import {FB_URL, IS_POST_LOGIN, LOCAL_STORAGE} from './app/shared';
 import {IssueZeroAppComponent} from './app/';
@@ -50,7 +51,8 @@ export const options = {
         getItem: () => null,
         setItem: () => null
       }
-    })
+    }),
+    provideStore({})
   ]
 };
 

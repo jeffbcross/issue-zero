@@ -7,7 +7,13 @@ import {Store} from '@ngrx/store';
 
 import {ToolbarComponent} from './toolbar/toolbar.component';
 import {IssueRowComponent} from './issue-row/issue-row.component';
-import { AppState, Issue, Repo } from '../../shared';
+import {
+  AppState,
+  Issue,
+  Repo,
+  SELECTED_REPOSITORY_STORE_NAME,
+  SELECTED_REPOSITORY_ACTION_TYPES
+} from '../../shared';
 import {GithubService} from '../../github.service';
 import {
   Filter,
@@ -61,16 +67,28 @@ export class ListComponent implements OnInit {
     /**
      * Get full repo object based on route params.
      */
-    this.store.select('selectedRepository').subscribe(r => console.log('repo loaded from store', r))
-    this.repoSelection = this.store.select('repos')
-                             .filter((r: Repo) => !!r)
-                             .map((repos: Repo[]) => repos.filter((repository: Repo) => {
-                               return repository.name === repo && repository.owner.login === org;
-                             })[0]);
-
-    this.gh.getRepo(`${org}/${repo}`).subscribe((_repo: Repo) => {
-      this.store.dispatch({type: 'AddRepo', payload: _repo});
-    });
+    this.repoSelection = <Observable<Repo>>this.store.select(SELECTED_REPOSITORY_STORE_NAME)
+      /**
+       * If this route is loaded directly, there may not be
+       * a selectedRepo in the store yet. Since we have the state
+       * in the route, let's populate the store.
+       * TODO: centralize the management of this.
+       */
+      .do((r: Repo) => {
+        console.log('r?', r);
+        if (!r) this.store.dispatch({
+            type: SELECTED_REPOSITORY_ACTION_TYPES.Selected,
+            payload: { org, repo }
+          })
+      })
+      /**
+       * Now get the repository information from the store.
+       */
+      .switchMap((r: Repo) => this.store.select('repos')
+          .filter((r: Repo) => !!r)
+          .map((repos: Repo[]) => repos.filter((repository: Repo) => {
+            return repository.name === repo && repository.owner.login === org;
+          })[0]));
 
     /**
      * Fetch the issues for this repo.
@@ -78,6 +96,15 @@ export class ListComponent implements OnInit {
     this.addIssueSubscription =
         this.store.select('filters')
             .map((filters: FilterMap) => filters && filters[`${org}/${repo}`])
+            /**
+             * If there's not already a filter set for this repo, create one.
+             */
+            .do((f: Filter) => {
+              if (!f) this.store.dispatch({
+                type: 'CreateFilterIfNotExist',
+                payload: { org, repo }
+              });
+            })
             .filter((filter: Filter) => !!filter)
             .map((filter: FilterObject) => generateQuery(filter))
             .switchMap((query: string) => this.gh.getIssues(query))
